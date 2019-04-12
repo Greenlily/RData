@@ -106,10 +106,10 @@ server <- function(input, output, session) {
     
     sliderArrage<- input$slider
     
-    ob<-input$obs
-    print(ob)
-    print(sliderArrage)
-    print(length(sliderArrage))
+    # ob<-input$obs
+    # print(ob)
+    # print(sliderArrage)
+    # print(length(sliderArrage))
     # print(vectorCHs)
     vectorCH2.2=df$CH2.2.V
     vectorCH3.2=df$CH3.2.V.
@@ -128,8 +128,8 @@ server <- function(input, output, session) {
       }
       else
       {
-        print(StartIdx)
-        print(EndIdx)
+        # print(StartIdx)
+        # print(EndIdx)
         vectorCH2.2 = vectorCH2.2[c(StartIdx:EndIdx)]
         vectorCH3.2 = vectorCH3.2[c(StartIdx:EndIdx)]
         # print(vectorCH3.2)
@@ -217,15 +217,22 @@ server <- function(input, output, session) {
     # print(time.Idx1DEffectiveCH3.2)
     
     time.Idx1DEffectiveCH3.22<-time.Idx1DEffectiveCH3.2[-1]-time.Idx1DEffectiveCH3.2[-length(time.Idx1DEffectiveCH3.2)]
-    time.Idxeffect3.2<-time.Idx1DEffectiveCH3.2[time.Idx1DEffectiveCH3.22>10]+1
-    pulse.x.CH3.2<-vectorTime[time.Idxeffect3.2]
+    pulse.x.CH3.2.idx<-time.Idx1DEffectiveCH3.2[time.Idx1DEffectiveCH3.22>10]+1
+    # print(pulse.x.CH3.2.idx)
+    pulse.x.CH3.2<-vectorTime[pulse.x.CH3.2.idx]
     
-    print(time.Idxeffect3.2)
+    # print(time.Idxeffect3.2)
     # print(which(time.Idx1DEffectiveCH3.22>10))
-    print(paste("CH3.2 x节点：",pulse.x.CH3.2) )
+    # print(paste("CH3.2 x节点：",pulse.x.CH3.2) )
     
     #处理动作波形CH3.2
-    
+    #周期总数=动作波形突变点数/8的商
+    Cycle.Qty<-funGetCycleQty(pulse.x.CH3.2,8)
+    print(Cycle.Qty)
+    #CH3.2总周期时间段
+    TotalCycle.TimeSpan.CH3.2<-pulse.x.CH3.2[8*Cycle.Qty+1]-pulse.x.CH3.2[1]
+    #CH3.2平均周期
+    Cycle.avg.CH3.2<-TotalCycle.TimeSpan.CH3.2/Cycle.Qty
     
     #处理感应波形CH2.2
    df.Next<-vectorCH2.2[-1]
@@ -236,20 +243,55 @@ server <- function(input, output, session) {
    # print(df.Idx1DEffective)
   
    time.Idx1DEffective2<-time.Idx1DEffective[-1]-time.Idx1DEffective[-length(time.Idx1DEffective)]
-   time.Idxeffect<-time.Idx1DEffective[time.Idx1DEffective2>10]+1
-   pulse.x.CH2.2<-vectorTime[time.Idxeffect]
-   print(paste("CH2.2 x节点：",pulse.x.CH2.2) )
+   pulse.x.CH2.2.idx<-time.Idx1DEffective[time.Idx1DEffective2 > 10] + 1
+   pulse.x.CH2.2<-vectorTime[pulse.x.CH2.2.idx]
+   print(pulse.x.CH2.2.idx)
+   print(length(pulse.x.CH2.2.idx))
+   # print(paste("CH2.2 x节点：",pulse.x.CH2.2))
+   highPoints.CH2.2<-vector(mode="numeric",length=0)
+   lowPoints.CH2.2<-vector(mode="numeric",length=0)
+   if(vectorCH2.2[pulse.x.CH2.2.idx[2]]-vectorCH2.2[pulse.x.CH2.2.idx[1]]<0)#识别高低电平变化规律
+   {
+     #获取所有高电平向量、所有低电平向量
+     vidx<-1
+     while (vidx <= Cycle.Qty) {
+       # print(vidx)
+       temphighPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx-1]+3):(pulse.x.CH2.2.idx[2*vidx]-3)]#往区间内两端各收3个点过滤误差值
+       highPoints.CH2.2 <- c(highPoints.CH2.2,temphighPoints.CH2.2)
+       
+       templowPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx]+3):(pulse.x.CH2.2.idx[2*vidx+1]-3)]
+       if(vidx>105)
+       {
+         print(vidx)
+         print(templowPoints.CH2.2)
+       }
+       lowPoints.CH2.2 <- c(lowPoints.CH2.2,templowPoints.CH2.2)
+       vidx = vidx + 1
+     }
+     # print("end")
+   }
+   else
+   {
+     vidx<-1
+     while (vidx <= Cycle.Qty) {
+       # print(vidx)
+       temphighPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx]+3):(pulse.x.CH2.2.idx[2*vidx+1]-3)]
+       highPoints.CH2.2 <- c(highPoints.CH2.2,temphighPoints.CH2.2)
+       
+       templowPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx-1]+3):(pulse.x.CH2.2.idx[2*vidx]-3)]
+       lowPoints.CH2.2 <- c(lowPoints.CH2.2,templowPoints.CH2.2)
+       vidx = vidx + 1
+     }
+     print(paste("怎么回事"))
+   }
+   
+   print(mean(highPoints.CH2.2))
+   print(mean(lowPoints.CH2.2))
+   
    # print(time.Idxeffect)
    # print(which(time.Idx1DEffective2>10))
    #处理感应波形CH2.2
    
-   #周期总数=动作波形突变点数/8的商
-   Cycle.Qty<-(length(pulse.x.CH3.2)-2)%/%8
-   print(Cycle.Qty)
-   #CH3.2总周期时间段
-   TotalCycle.TimeSpan.CH3.2<-pulse.x.CH3.2[8*Cycle.Qty+1]-pulse.x.CH3.2[1]
-   #CH3.2平均周期
-   Cycle.avg.CH3.2<-TotalCycle.TimeSpan.CH3.2/Cycle.Qty
    # print(Cycle.avg.CH3.2)
    #CH3.2异常周期（初始显示）
    #step1：获取每个周期的时间段，和时间间隔
@@ -271,7 +313,7 @@ server <- function(input, output, session) {
    Cycle.diff.SortedIdx<-vector(mode="numeric",length=0)
    for (variable in Cycle.diff.DecSorted) {
      tempCycle.diff.SortedIdx<-which(Cycle.diff==variable)
-     Cycle.diff.SortedIdx<-c(Cycle.diff.SortedIdx,tempCycle.diff.SortedIdx)
+     Cycle.diff.SortedIdx <- c(Cycle.diff.SortedIdx,tempCycle.diff.SortedIdx)
    }
    print(Cycle.diff.SortedIdx)
    
@@ -321,7 +363,7 @@ server <- function(input, output, session) {
      high.1stEnd2ndStart.timespan<-c(high.1stEnd2ndStart.timespan,temphigh.1stEnd2ndStart.timespan)
      
      temphigh.2nd.timespan<-pulse.x.CH3.2[8*cnt+4]-pulse.x.CH3.2[8*cnt+3]
-     high.1st.timespan<-c(high.2nd.timespan,temphigh.2nd.timespan)
+     high.2nd.timespan<-c(high.2nd.timespan,temphigh.2nd.timespan)
      
      temphigh.1stStart2ndStart.timespan<-pulse.x.CH3.2[8*cnt+3]-pulse.x.CH3.2[8*cnt+1]
      high.1stStart2ndStart.timespan<-c(high.1stStart2ndStart.timespan,temphigh.1stStart2ndStart.timespan)
@@ -439,60 +481,63 @@ server <- function(input, output, session) {
    # print(cycle)
    # print(max(df.Idx1DValue))
    # print(min(df.Idx1DValue))
-   highPoints<-vectorCH2.2[vectorCH2.2>20]#c(df$CH2.2.V.[time.Idxeffect[1]:time.Idxeffect[2]],df$CH2.2.V.[time.Idxeffect[3]:time.Idxeffect[4]])
-   lowPoints<-vectorCH2.2[vectorCH2.2<1]
    
-   highMean<-mean(highPoints)
-   highMax<-max(highPoints)
-   highMin<-min(highPoints)
+   
+   # highPoints<-highPoints#c(df$CH2.2.V.[time.Idxeffect[1]:time.Idxeffect[2]],df$CH2.2.V.[time.Idxeffect[3]:time.Idxeffect[4]])
+   
+   lowPoints<-vectorCH2.2[vectorCH2.2 < 1]
+   
+   highMean<-mean(highPoints.CH2.2)
+   highMax<-max(highPoints.CH2.2)
+   highMin<-min(highPoints.CH2.2)
    
    # print(highPoints)
    # #单次高电平异常位置
    # #step2:按周期差值排序，获取到排序的索引
-   highPoints.diff<-abs(highPoints - highMean)
-   highPoints.diff.DecSorted<-highPoints.diff[order(highPoints.diff,decreasing=TRUE)[1:5]]
+   highPoints.CH2.2.diff<-abs(highPoints.CH2.2 - highMean)
+   highPoints.CH2.2.diff.DecSorted<-highPoints.CH2.2.diff[order(highPoints.CH2.2.diff,decreasing=TRUE)[1:5]]
 
-   highPoints.diff.SortedIdx<-vector(mode="numeric",length=0)
+   highPoints.CH2.2.diff.SortedIdx<-vector(mode="numeric",length=0)
    vectorCH2.2.Sorted.Idx<-vector(mode="numeric",length=0)
-   for (variable in highPoints.diff.DecSorted) {
-     temphighPoints.diff.SortedIdx<-which(highPoints.diff==variable)
-     highPoints.diff.SortedIdx<-c(highPoints.diff.SortedIdx,temphighPoints.diff.SortedIdx)
+   for (variable in highPoints.CH2.2.diff.DecSorted) {
+     temphighPoints.CH2.2.diff.SortedIdx<-which(highPoints.CH2.2.diff==variable)
+     highPoints.CH2.2.diff.SortedIdx<-c(highPoints.CH2.2.diff.SortedIdx,temphighPoints.CH2.2.diff.SortedIdx)
      
-     tempvectorCH2.2SortedIdx<-which(vectorCH2.2==highPoints[temphighPoints.diff.SortedIdx])
+     tempvectorCH2.2SortedIdx<-which(vectorCH2.2==highPoints.CH2.2[temphighPoints.CH2.2.diff.SortedIdx])
      vectorCH2.2.Sorted.Idx<-c(vectorCH2.2.Sorted.Idx,tempvectorCH2.2SortedIdx)
    }
-   print(highPoints.diff.SortedIdx)
-   highPoints.Max5Point.vectorTime<-vectorTime[vectorCH2.2.Sorted.Idx]
-   highPoints.Max5Point.vectorCH2.2<-highPoints[highPoints.diff.SortedIdx]
+   print(highPoints.CH2.2.diff.SortedIdx)
+   highPoints.CH2.2.Max5Point.vectorTime<-vectorTime[vectorCH2.2.Sorted.Idx][1:5]
+   highPoints.CH2.2.Max5Point.vectorCH2.2<-highPoints.CH2.2[highPoints.CH2.2.diff.SortedIdx]
    
-   print(highPoints.Max5Point.vectorCH2.2)
+   print(highPoints.CH2.2.Max5Point.vectorCH2.2)
    
-   lowMean<-mean(lowPoints)
-   lowMax<-max(lowPoints)
-   lowMin<-min(lowPoints)
+   lowMean<-mean(lowPoints.CH2.2)
+   lowMax<-max(lowPoints.CH2.2)
+   lowMin<-min(lowPoints.CH2.2)
    
-   # print(lowPoints)
+   # print(lowPoints.CH2.2)
    # #单次低电平异常位置
    #step2:按周期差值排序，获取到排序的索引
-   lowPoints.diff<-abs(lowPoints - lowMean)
-   # print(lowPoints.diff)
+   lowPoints.CH2.2.diff<-abs(lowPoints.CH2.2 - lowMean)
+   # print(lowPoints.CH2.2.diff)
    # print(sort(Cycle.diff, decreasing = TRUE))
-   lowPoints.diff.DecSorted=lowPoints.diff[order(lowPoints.diff,decreasing=TRUE)[1:5]]
-   lowPoints.diff.SortedIdx<-vector(mode="numeric",length=0)
+   lowPoints.CH2.2.diff.DecSorted=lowPoints.CH2.2.diff[order(lowPoints.CH2.2.diff,decreasing=TRUE)[1:5]]
+   lowPoints.CH2.2.diff.SortedIdx<-vector(mode="numeric",length=0)
    vectorCH2.2.Sorted.Idx<-vector(mode="numeric",length=0)
-   for (variable in lowPoints.diff.DecSorted) {
-     templowPoints.diff.SortedIdx<-which(lowPoints.diff==variable)
-     lowPoints.diff.SortedIdx<-c(lowPoints.diff.SortedIdx,templowPoints.diff.SortedIdx)
+   for (variable in lowPoints.CH2.2.diff.DecSorted) {
+     templowPoints.CH2.2.diff.SortedIdx<-which(lowPoints.CH2.2.diff==variable)
+     lowPoints.CH2.2.diff.SortedIdx<-c(lowPoints.CH2.2.diff.SortedIdx,templowPoints.CH2.2.diff.SortedIdx)
      
-     tempvectorCH2.2SortedIdx<-which(vectorCH2.2==lowPoints[templowPoints.diff.SortedIdx])
+     tempvectorCH2.2SortedIdx<-which(vectorCH2.2==lowPoints.CH2.2[templowPoints.CH2.2.diff.SortedIdx])
      vectorCH2.2.Sorted.Idx<-c(vectorCH2.2.Sorted.Idx,tempvectorCH2.2SortedIdx)
    }
-   lowPoints.Max5Point.vectorTime<-vectorTime[vectorCH2.2.Sorted.Idx]
-   lowPoints.Max5Point.vectorCH2.2<-lowPoints[lowPoints.diff.SortedIdx]
-   print(lowPoints.diff.SortedIdx)
-   print(vectorTime[vectorCH2.2.Sorted.Idx])
-   print(lowPoints.diff.DecSorted)
-   print(lowPoints[lowPoints.diff.SortedIdx])
+   lowPoints.CH2.2.Max5Point.vectorTime<-vectorTime[vectorCH2.2.Sorted.Idx][1:5]
+   lowPoints.CH2.2.Max5Point.vectorCH2.2<-lowPoints.CH2.2[lowPoints.CH2.2.diff.SortedIdx]
+   # print(lowPoints.CH2.2.diff.SortedIdx)
+   # print(vectorTime[vectorCH2.2.Sorted.Idx])
+   # print(lowPoints.CH2.2.diff.DecSorted)
+   # print(lowPoints.CH2.2[lowPoints.CH2.2.diff.SortedIdx])
    
    # #单次高电平持续时间异常位置
    # #step2:按周期差值排序，获取到排序的索引
@@ -622,11 +667,11 @@ server <- function(input, output, session) {
         signif(highMean,7),
         signif(highMax,7),
         signif(highMin,7),
-        1, # str_c(highPoints.Max5Point.vectorTime,collapse=','),
+         str_c(highPoints.CH2.2.Max5Point.vectorTime,collapse=','),
         signif(lowMean,7),
         signif(lowMax,7),
         signif(lowMin,7),
-        2,# str_c(lowPoints.Max5Point.vectorTime,collapse=','),
+         str_c(lowPoints.CH2.2.Max5Point.vectorTime,collapse=','),
         signif(mean(high.CH2.2.timespan),7),
         signif(max(high.CH2.2.timespan),7),
         signif(min(high.CH2.2.timespan),7),
@@ -707,7 +752,7 @@ server <- function(input, output, session) {
   
   # Show the values using an HTML table
   output$values <- renderTable({
-    InitValues()
+    # InitValues()
   })
   output$SenseValues <- renderTable({
     SenseSignalValues()
@@ -781,6 +826,17 @@ funGetPlot <- function(df,n,slideID,YText) {
 funGetgeom_line <- function(n,CH) {
   geom_line(aes(y = n, colour = CH ))
 }	
+
+funGetCycleQty <- function(vector,pulseQtyperCycle){
+  if((length(vector)) %% pulseQtyperCycle == 0)
+  {
+    Cycle.Qty<-(length(vector)) %/% pulseQtyperCycle-1
+  }
+  else
+  {
+    Cycle.Qty<-(length(vector)) %/% pulseQtyperCycle
+  }
+}
 # Create Shiny app ----
 shinyApp(ui, server)
 
