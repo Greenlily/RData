@@ -45,26 +45,34 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 # Define UI for data upload app ----
 ui <- fluidPage(
   # App title ----
-  titlePanel("数据可视化"),
+  titlePanel("设备数据分析"),
+  # tags$script(src='R.js'),
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
     # Sidebar panel for inputs ----
     sidebarPanel(
-      numericInput("obs", "请输入通道数:", 2,min = 1, max = 16),
-      # Input: Select a file ----
-      fileInput("file1", "请选择CSV文件",
-                multiple = TRUE,
-                accept = c("text/csv",
-                           "text/comma-separated-values,text/plain",
-                           ".csv")),
-      # Horizontal line ----
-      # tags$hr(),
-      uiOutput("slider"),
       fluidRow(     
         column(3,
                radioButtons("disp", "显示:",
                             choices = c(合图 = "One",分图 = "Many"),selected = "Many")
-               ),
+        ),
+        column(9,
+               fileInput("file1", "请选择CSV文件",
+                         multiple = TRUE,
+                         accept = c("text/csv",
+                                    "text/comma-separated-values,text/plain",
+                                    ".csv"))
+        )
+      ),
+      # Input: Select a file ----
+      # Horizontal line ----
+      # tags$hr(),
+      uiOutput("slider"),
+      fluidRow(     
+        # column(3,
+        #        radioButtons("disp", "显示:",
+        #                     choices = c(合图 = "One",分图 = "Many"),selected = "Many")
+        #        ),
         column(3,
                uiOutput("checkboxGroupInput")
                ),
@@ -80,25 +88,120 @@ ui <- fluidPage(
     # Main panel for displaying outputs ----
     mainPanel(
       # Output: Data file ----
-      plotOutput("sepratePlot"),
-      verbatimTextOutput("summary"),
+      # plotOutput("sepratePlot",width = "100%", height = "800px"),
+      # verbatimTextOutput("summary"),
       # tableOutput("contents"),
-      tableOutput("SenseValues")
+      # tableOutput("SenseValues"),
+      # absolutePanel(
+      #   top = 150, right=150, width=200, draggable = TRUE, style="padding: 20px; border: 1px solid red;",
+      #   "可以移动的框框2"
+      # ),
+      fluidRow(     
+        column(8,
+               absolutePanel(
+                 top = 0, left=10, width=1, draggable = TRUE, style="float:left; padding: 0px;border: 5px solid #666666;opacity:0.5;",
+                 # hr()
+                 HTML( '<div style="float:left;margin-top: 30px;width: 1px;height: 1000px; background: #666666;"></div>' )
+                 # plotOutput("sepratePlot",width = "100%", height = "900px")
+               ),
+               # absolutePanel(
+               #   top = 0, right=50, width=750, draggable = TRUE, style="padding: 20px; border: 1px solid red;opacity:0.7;",
+               #   "可以移动的框框2",
+               #   
+               # )
+               plotOutput("sepratePlot",width = "100%", height = "900px")
+               # absolutePanel(
+               #   top = 0, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "0",
+               #   plotOutput("Plot1",width = "100%", height = "100px",brush='pl_brush')
+               # ),
+               # absolutePanel(
+               #   top = 100, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "1",
+               #   plotOutput("Plot2",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 200, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "2",
+               #   plotOutput("Plot3",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 300, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "3",
+               #   plotOutput("Plot4",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 400, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "4",
+               #   plotOutput("Plot5",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 500, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "5",
+               #   plotOutput("Plot6",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 600, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "6",
+               #   plotOutput("Plot7",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 700, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "7",
+               #   plotOutput("Plot8",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 800, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "8",
+               #   plotOutput("Plot9",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 900, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "9",
+               #   plotOutput("Plot10",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 1000, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "10",
+               #   plotOutput("Plot11",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 1100, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "11",
+               #   plotOutput("Plot12",width = "100%", height = "100px")
+               # ),
+               # absolutePanel(
+               #   top = 1100, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
+               #   "11",
+               #   plotOutput("Plot12",width = "100%", height = "100px")
+               # )
+        ),
+        column(4,
+               tableOutput("SenseValues")
+        )
+      )
     )
   )
 )
 
 # Define server logic to read selected file ----
 server <- function(input, output, session) {
+  
   csvdata <- reactive({ 
     # print(input$obs)
     req(input$file1)
+    df1<-read.csv(input$file1$datapath,
+                  header = TRUE,
+                  sep = ',',
+                  quote = '""',skip = 100,nrows = 1)
+    # print(length(df1))
+    
     df <- read.csv(input$file1$datapath,
                    header = TRUE,
                    sep = ',',
-                   quote = '""',skip = 6+input$obs)
+                   quote = '""',skip = 6+length(df1)-1)
   })
-  
+  # pts <- reactiveValues(sel=rep(FALSE, nrow(csvdata())))
   InitValues <- reactive({
 
     df<-csvdata()
@@ -139,6 +242,9 @@ server <- function(input, output, session) {
     #处理感应波形CH2.2
     df.Next<-vectorCH2.2[-1]
     df<-vectorCH2.2[-length(vectorCH2.2)]
+   print(paste("长度1"),length(df.Next)) 
+   print(paste("长度2"),length(df)) 
+    
     df.Idx1DValue<-df.Next-df
     df.Idx1DEffective<-df.Idx1DValue[abs(df.Idx1DValue)>7]
     time.Idx1DEffective<-which(abs(df.Idx1DValue)>7)
@@ -228,7 +334,9 @@ server <- function(input, output, session) {
     #处理动作波形CH3.2
     #周期总数=动作波形突变点数/8的商
     Cycle.Qty<-funGetCycleQty(pulse.x.CH3.2,8)
-    print(Cycle.Qty)
+
+    # print(Cycle.Qty)
+    
     #CH3.2总周期时间段
     TotalCycle.TimeSpan.CH3.2<-pulse.x.CH3.2[8*Cycle.Qty+1]-pulse.x.CH3.2[1]
     #CH3.2平均周期
@@ -236,17 +344,22 @@ server <- function(input, output, session) {
     
     #处理感应波形CH2.2
    df.Next<-vectorCH2.2[-1]
-   df<-vectorCH2.2[-length(vectorCH2.2)]
+   df<-vectorCH2.2[-length(vectorCH2.2)-1]
    df.Idx1DValue<-df.Next-df
    df.Idx1DEffective<-df.Idx1DValue[abs(df.Idx1DValue)>7]
    time.Idx1DEffective<-which(abs(df.Idx1DValue)>7)
-   # print(df.Idx1DEffective)
+   print(df.Idx1DEffective)
   
    time.Idx1DEffective2<-time.Idx1DEffective[-1]-time.Idx1DEffective[-length(time.Idx1DEffective)]
    pulse.x.CH2.2.idx<-time.Idx1DEffective[time.Idx1DEffective2 > 10] + 1
    pulse.x.CH2.2<-vectorTime[pulse.x.CH2.2.idx]
-   print(pulse.x.CH2.2.idx)
-   print(length(pulse.x.CH2.2.idx))
+   pulse.x.CH2.2<-pulse.x.CH2.2[!is.na(pulse.x.CH2.2)]
+   Cycle.Qty.CH2.2<-funGetCycleQty(pulse.x.CH2.2,2)
+   # print(Cycle.Qty.CH2.2)
+   
+   # print(pulse.x.CH2.2.idx)
+   # print(length(pulse.x.CH2.2.idx))
+   
    # print(paste("CH2.2 x节点：",pulse.x.CH2.2))
    highPoints.CH2.2<-vector(mode="numeric",length=0)
    lowPoints.CH2.2<-vector(mode="numeric",length=0)
@@ -254,17 +367,17 @@ server <- function(input, output, session) {
    {
      #获取所有高电平向量、所有低电平向量
      vidx<-1
-     while (vidx <= Cycle.Qty) {
-       # print(vidx)
+     while (vidx <= Cycle.Qty.CH2.2) {
+       print(vidx)
        temphighPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx-1]+3):(pulse.x.CH2.2.idx[2*vidx]-3)]#往区间内两端各收3个点过滤误差值
        highPoints.CH2.2 <- c(highPoints.CH2.2,temphighPoints.CH2.2)
        
        templowPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx]+3):(pulse.x.CH2.2.idx[2*vidx+1]-3)]
-       if(vidx>105)
-       {
-         print(vidx)
-         print(templowPoints.CH2.2)
-       }
+       # if(vidx>105)
+       # {
+       #   print(vidx)
+       #   print(templowPoints.CH2.2)
+       # }
        lowPoints.CH2.2 <- c(lowPoints.CH2.2,templowPoints.CH2.2)
        vidx = vidx + 1
      }
@@ -284,7 +397,7 @@ server <- function(input, output, session) {
      }
      print(paste("怎么回事"))
    }
-   
+   # print(highPoints.CH2.2)
    print(mean(highPoints.CH2.2))
    print(mean(lowPoints.CH2.2))
    
@@ -495,7 +608,7 @@ server <- function(input, output, session) {
    # #单次高电平异常位置
    # #step2:按周期差值排序，获取到排序的索引
    highPoints.CH2.2.diff<-abs(highPoints.CH2.2 - highMean)
-   highPoints.CH2.2.diff.DecSorted<-highPoints.CH2.2.diff[order(highPoints.CH2.2.diff,decreasing=TRUE)[1:5]]
+   highPoints.CH2.2.diff.DecSorted<-highPoints.CH2.2.diff[order(highPoints.CH2.2.diff,decreasing=TRUE)[1:3]]
 
    highPoints.CH2.2.diff.SortedIdx<-vector(mode="numeric",length=0)
    vectorCH2.2.Sorted.Idx<-vector(mode="numeric",length=0)
@@ -507,7 +620,7 @@ server <- function(input, output, session) {
      vectorCH2.2.Sorted.Idx<-c(vectorCH2.2.Sorted.Idx,tempvectorCH2.2SortedIdx)
    }
    print(highPoints.CH2.2.diff.SortedIdx)
-   highPoints.CH2.2.Max5Point.vectorTime<-vectorTime[vectorCH2.2.Sorted.Idx][1:5]
+   highPoints.CH2.2.Max5Point.vectorTime<-vectorTime[vectorCH2.2.Sorted.Idx][1:3]
    highPoints.CH2.2.Max5Point.vectorCH2.2<-highPoints.CH2.2[highPoints.CH2.2.diff.SortedIdx]
    
    print(highPoints.CH2.2.Max5Point.vectorCH2.2)
@@ -522,7 +635,7 @@ server <- function(input, output, session) {
    lowPoints.CH2.2.diff<-abs(lowPoints.CH2.2 - lowMean)
    # print(lowPoints.CH2.2.diff)
    # print(sort(Cycle.diff, decreasing = TRUE))
-   lowPoints.CH2.2.diff.DecSorted=lowPoints.CH2.2.diff[order(lowPoints.CH2.2.diff,decreasing=TRUE)[1:5]]
+   lowPoints.CH2.2.diff.DecSorted=lowPoints.CH2.2.diff[order(lowPoints.CH2.2.diff,decreasing=TRUE)[1:3]]
    lowPoints.CH2.2.diff.SortedIdx<-vector(mode="numeric",length=0)
    vectorCH2.2.Sorted.Idx<-vector(mode="numeric",length=0)
    for (variable in lowPoints.CH2.2.diff.DecSorted) {
@@ -532,7 +645,7 @@ server <- function(input, output, session) {
      tempvectorCH2.2SortedIdx<-which(vectorCH2.2==lowPoints.CH2.2[templowPoints.CH2.2.diff.SortedIdx])
      vectorCH2.2.Sorted.Idx<-c(vectorCH2.2.Sorted.Idx,tempvectorCH2.2SortedIdx)
    }
-   lowPoints.CH2.2.Max5Point.vectorTime<-vectorTime[vectorCH2.2.Sorted.Idx][1:5]
+   lowPoints.CH2.2.Max5Point.vectorTime<-vectorTime[vectorCH2.2.Sorted.Idx][1:3]
    lowPoints.CH2.2.Max5Point.vectorCH2.2<-lowPoints.CH2.2[lowPoints.CH2.2.diff.SortedIdx]
    # print(lowPoints.CH2.2.diff.SortedIdx)
    # print(vectorTime[vectorCH2.2.Sorted.Idx])
@@ -799,8 +912,12 @@ server <- function(input, output, session) {
       }
       
       x = length(plotlist1)
+      
       cols = round(sqrt(x),0)
       rows = ceiling(x/cols)
+      
+      cols=1
+      rows=length(plotlist1)
       bl <- (length(plotlist1)==0)
       if(bl)
       {}
@@ -814,6 +931,108 @@ server <- function(input, output, session) {
     }
     
   })
+  # for (v in icons) {
+  #   idx<-which(vectorCHs==v)#获取勾选的通道的索引
+  #   
+  #   nam <- paste("plot", icons[idx], sep = ".")
+  #   nam<- funGetPlot(df,idx+1,input$slider,icons[idx])
+  #   print(nam)#这是一个超级大坑，一定要print出来，否则报错
+  #   plotlist1[[idx]]<- nam
+  # }
+  # observeEvent(
+  #   input$pl_brush,
+  #   {
+  #     df<-csvdata()
+  #     # if(!is.null(input$pl_click)) { ## 此处判断的是pl_click!
+  #       df <- brushedPoints(df, input$pl_brush, x='Time.s.', y='CH1.1.V.', allRows=TRUE)
+  #       pts$sel <- xor(pts$sel, df$selected)
+  #     # }
+  #   })
+
+  # output$Plot1<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #     icons <- c(input$icons)
+  #     funGetPlot(df,2,input$slider,icons[1])
+  # })
+  # output$Plot2<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,3,input$slider,icons[2])
+  # })
+  # output$Plot3<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,4,input$slider,icons[3])
+  # })
+  # output$Plot4<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,5,input$slider,icons[4])
+  # })
+  # output$Plot5<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,6,input$slider,icons[5])
+  # })
+  # output$Plot6<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,7,input$slider,icons[6])
+  # })
+  # output$Plot7<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,8,input$slider,icons[7])
+  # })
+  # output$Plot8<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,9,input$slider,icons[8])
+  # })
+  # output$Plot9<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,10,input$slider,icons[9])
+  # })
+  # output$Plot10<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,11,input$slider,icons[10])
+  # })
+  # output$Plot11<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,12,input$slider,icons[11])
+  # })
+  # output$Plot12<- renderPlot({
+  #   df<-csvdata()
+  #   vectorCHs<- colnames(df)[-1]
+  #   
+  #   icons <- c(input$icons)
+  #   funGetPlot(df,13,input$slider,icons[12])
+  # })
 }
 # Create a function to print squares of numbers in sequence.
 funGetPlot <- function(df,n,slideID,YText) {
@@ -821,6 +1040,11 @@ funGetPlot <- function(df,n,slideID,YText) {
     ggplot(data = df, mapping = aes(x = df$Time.s., y = df[,n])) + 
     geom_line()+ labs(x="Time[s]",y=YText)+#+geom_point() 
     scale_x_continuous(limits=slideID)
+   # theme(
+   #    # panel.background = element_rect(fill = "transparent",colour = NA), 
+   #    # panel.grid.minor = element_blank(), 
+   #    # panel.grid.major = element_blank(),
+   #    plot.background = element_rect(fill = "transparent",colour = NA))
 }	
 
 funGetgeom_line <- function(n,CH) {
@@ -828,6 +1052,8 @@ funGetgeom_line <- function(n,CH) {
 }	
 
 funGetCycleQty <- function(vector,pulseQtyperCycle){
+  # print(vector)
+  print(paste("xiiiiiiii",pulseQtyperCycle)) 
   if((length(vector)) %% pulseQtyperCycle == 0)
   {
     Cycle.Qty<-(length(vector)) %/% pulseQtyperCycle-1
