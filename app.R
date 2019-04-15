@@ -67,7 +67,7 @@ ui <- fluidPage(
       
       fluidRow(     
 
-        column(3,
+        column(6,
                uiOutput("checkboxGroupInput")
                ),
         column(6,
@@ -292,7 +292,17 @@ server <- function(input, output, session) {
   output$checkboxGroupInput <- renderUI({
     df<-csvdata()
     vectorCHs<- colnames(df)
-    checkboxGroupInput("icons", "请勾选通道:",choices=vectorCHs[-1],selected=vectorCHs[-1],inline = FALSE)
+    CHs.16<-c("CH1.1.V.","CH1.2.V.","CH1.3.V.","CH1.4.V.","CH2.1.V.","CH2.2.V.","CH2.3.V.","CH2.4.V.","CH3.1.V.","CH3.2.V.","CH3.3.V.","CH3.4.V.","CH4.1.V.","CH4.2.V.","CH4.3.V.","CH4.4.V.")
+    CHs.16_Remarks<-c("物料感应","植入上感应","植入下感应","检测1感应","检测2感应","中间盘感应","POS PIN 感应","POS PIN 位置感应","分离感应","中间盘动作","植入动作","上烙铁动作","POS PIN 动作","分离动作","检测1动作","检测2动作")
+
+    CHs.FullName<-vector(mode="character",length=0)
+    for (variable in vectorCHs) {
+      idx<-which(CHs.16 == variable)
+      tempCHs.FullName<-paste(variable,CHs.16_Remarks[idx])
+      CHs.FullName<-c(CHs.FullName,tempCHs.FullName)
+    }
+    print(CHs.FullName)
+    checkboxGroupInput("icons", "请勾选通道:",choices=CHs.FullName[-1],selected=CHs.FullName[-1],inline = FALSE)
   })
   output$ddl_YoffsetCH <- renderUI({
     df<-csvdata()
@@ -1137,6 +1147,7 @@ server <- function(input, output, session) {
        # print(Y.offset)
        
        icons <- c(input$icons)
+       icons<-substring(icons, 1, 8)
        p<- ggplot(df, aes(df$Time.s.))+scale_x_continuous(limits=input$slider)
        for (v in icons) {
          idx<-which(vectorCHs==v)#获取勾选的通道的索引
@@ -1153,6 +1164,7 @@ server <- function(input, output, session) {
     else {
 
       icons <- c(input$icons)
+      icons<-substring(icons, 1, 8)
       # print(icons)
       plotlist1<-list()
       for (v in icons) {
