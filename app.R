@@ -5,54 +5,15 @@ library(stringr)
 options(shiny.maxRequestSize=50*1024^2)
 sliderMax <- 1
 sliderMin <- 0
-
-vectorCHs <<- vector(mode="numeric",length=0)
-multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
-  library(grid)
-  
-  # Make a list from the ... arguments and plotlist
-  plots <- c(list(...), plotlist)
-  
-  numPlots = length(plots)
-  
-  # If layout is NULL, then use 'cols' to determine layout
-  if (is.null(layout)) {
-    # Make the panel
-    # ncol: Number of columns of plots
-    # nrow: Number of rows needed, calculated from # of cols
-    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-                     ncol = cols, nrow = ceiling(numPlots/cols))
-  }
-  
-  if (numPlots==1) {
-    print(plots[[1]])
-    
-  } else {
-    # Set up the page
-    grid.newpage()
-    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-    
-    # Make each plot, in the correct location
-    for (i in 1:numPlots) {
-      # Get the i,j matrix positions of the regions that contain this subplot
-      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
-      
-      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
-                                      layout.pos.col = matchidx$col))
-    }
-  }
-}
 # Define UI for data upload app ----
 ui <- fluidPage(
-  # App title ----
-  titlePanel("设备数据分析"),
-  # tags$script(src='R.js'),
-  # Sidebar layout with input and output definitions ----
   sidebarLayout(
     # Sidebar panel for inputs ----
     sidebarPanel(
+      h3("设备数据分析"),
       fluidRow(     
         column(3,
+               
                radioButtons("disp", "显示:",
                             choices = c(合图 = "One",分图 = "Many"),selected = "Many")
         ),
@@ -64,7 +25,6 @@ ui <- fluidPage(
                                     ".csv"))
         )
       ),
-      
       fluidRow(     
 
         column(6,
@@ -75,10 +35,9 @@ ui <- fluidPage(
                uiOutput("numericInput_Yoffset")
                )
       ),
-      uiOutput("sliderRegion"),
+      
       tableOutput("values")
     ),
-    
     # Main panel for displaying outputs ----
     mainPanel(
       fluidRow(     
@@ -86,90 +45,34 @@ ui <- fluidPage(
                uiOutput("slider"),
                absolutePanel(
                  top = 0, left=10, width=1, draggable = TRUE, style="float:left; padding: 0px;border: 5px solid #666666;opacity:0.5;",
-                 # hr()
                  HTML( '<div style="float:left;margin-top: 30px;width: 1px;height: 1000px; background: #666666;"></div>' )
-                 # plotOutput("sepratePlot",width = "100%", height = "900px")
                ),
-               # absolutePanel(
-               #   top = 0, right=50, width=750, draggable = TRUE, style="padding: 20px; border: 1px solid red;opacity:0.7;",
-               #   "可以移动的框框2",
-               #   
-               # )
-               plotOutput("sepratePlot",width = "100%", height = "900px")
-               # absolutePanel(
-               #   top = 0, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "0",
-               #   plotOutput("Plot1",width = "100%", height = "100px",brush='pl_brush')
-               # ),
-               # absolutePanel(
-               #   top = 100, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "1",
-               #   plotOutput("Plot2",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 200, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "2",
-               #   plotOutput("Plot3",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 300, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "3",
-               #   plotOutput("Plot4",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 400, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "4",
-               #   plotOutput("Plot5",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 500, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "5",
-               #   plotOutput("Plot6",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 600, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "6",
-               #   plotOutput("Plot7",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 700, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "7",
-               #   plotOutput("Plot8",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 800, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "8",
-               #   plotOutput("Plot9",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 900, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "9",
-               #   plotOutput("Plot10",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 1000, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "10",
-               #   plotOutput("Plot11",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 1100, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "11",
-               #   plotOutput("Plot12",width = "100%", height = "100px")
-               # ),
-               # absolutePanel(
-               #   top = 1100, right=50, width=750, draggable = TRUE, style="border: 1px solid ;opacity:0.7;",
-               #   "11",
-               #   plotOutput("Plot12",width = "100%", height = "100px")
-               # )
+               plotOutput("sepratePlot",width = "100%", height = "900px",brush='pl_brush')
         ),
         column(3,
-               h4('初始数据信息：'),
-               tableOutput("InitValues"),
-               h4('动作信号通道数据信息：'),
-               tableOutput("ActionValues"),
-               h4('感应信号通道数据信息：'),
-               tableOutput("SenseValues")
-               
+               tabsetPanel(
+                 type = "pills",
+                 tabPanel("初始显示", icon=icon("home"),tableOutput("InitValues")),
+                 navbarMenu(
+                   title = "分通道",
+                   tabPanel("CH1.1.V.物料感应"),
+                   tabPanel("CH1.2.V.植入上感应"),
+                   tabPanel("CH1.3.V.植入下感应"),
+                   tabPanel("CH1.4.V.检测1感应"),
+                   tabPanel("CH2.1.V.检测2感应"),
+                   tabPanel("CH2.2.V.中间盘感应",tableOutput("SenseValues")),
+                   tabPanel("CH2.3.V.POS PIN 感应"),
+                   tabPanel("CH2.4.V.POS PIN 位置感应"),
+                   tabPanel("CH3.1.V.分离感应"),
+                   tabPanel("CH3.2.V.中间盘动作",tableOutput("ActionValues")),
+                   tabPanel("CH3.3.V.植入动作"),
+                   tabPanel("CH3.4.V.上烙铁动作"),
+                   tabPanel("CH4.1.V.POS PIN 动作"),
+                   tabPanel("CH4.2.V.分离动作"),
+                   tabPanel("CH4.3.V.检测1动作"),
+                   tabPanel("CH4.4.V.检测2动作")),
+                 tabPanel("区域数据",uiOutput("sliderRegion"))
+               )
         )
       )
     )
@@ -194,8 +97,48 @@ server <- function(input, output, session) {
                    quote = '""',skip = 6+length(df1)-1)
   })
   # pts <- reactiveValues(sel=rep(FALSE, nrow(csvdata())))
-  InitValues <- reactive({
+  
+  output$slider <- renderUI({
+    df<-csvdata()
+    vectorTime=df$Time.s.
+    sliderMax<-max(vectorTime)
+    sliderMin<-min(vectorTime)
+    sliderInput(inputId="slider",NULL,  min = sliderMin,max = sliderMax, width = 1000,value = c(sliderMin,sliderMax), step = 0.0005)
+  })
+  output$sliderRegion <- renderUI({
+    df<-csvdata()
+    vectorTime=df$Time.s.
+    sliderMax<-max(vectorTime)
+    sliderMin<-min(vectorTime)
+    sliderInput("sliderRegion", NULL, min=sliderMin,max=sliderMax,value = c(sliderMin,sliderMax))
+  })
+  output$checkboxGroupInput <- renderUI({
+    df<-csvdata()
+    vectorCHs<- colnames(df)
+    CHs.16<-c("CH1.1.V.","CH1.2.V.","CH1.3.V.","CH1.4.V.","CH2.1.V.","CH2.2.V.","CH2.3.V.","CH2.4.V.","CH3.1.V.","CH3.2.V.","CH3.3.V.","CH3.4.V.","CH4.1.V.","CH4.2.V.","CH4.3.V.","CH4.4.V.")
+    CHs.16_Remarks<-c("物料感应","植入上感应","植入下感应","检测1感应","检测2感应","中间盘感应","POS PIN 感应","POS PIN 位置感应","分离感应","中间盘动作","植入动作","上烙铁动作","POS PIN 动作","分离动作","检测1动作","检测2动作")
 
+    CHs.FullName<-vector(mode="character",length=0)
+    for (variable in vectorCHs) {
+      idx<-which(CHs.16 == variable)
+      tempCHs.FullName<-paste(variable,CHs.16_Remarks[idx])
+      CHs.FullName<-c(CHs.FullName,tempCHs.FullName)
+    }
+    print(CHs.FullName)
+    checkboxGroupInput("icons", "请勾选通道:",choices=CHs.FullName[-1],selected=CHs.FullName[-1],inline = FALSE)
+  })
+  output$ddl_YoffsetCH <- renderUI({
+    df<-csvdata()
+    vectorCHs<- colnames(df)[-1]
+    selectInput("ddloffsetCH", "请设置通道Y偏移量:（合图时）", 
+                choices = vectorCHs)
+  })
+  output$numericInput_Yoffset <- renderUI({
+    numericInput("numYoffset", "Y 偏移量：", 1)
+  })
+  
+  InitValues <- reactive({
+    
     df<-csvdata()
     vectorCHs<- colnames(df)
     vectorCH2.2=df$CH2.2.V
@@ -271,47 +214,8 @@ server <- function(input, output, session) {
         str_c(Cycle.diff.SortedIdx,collapse=',')
       ), 
       stringsAsFactors=FALSE)
-
+      
     )
-  })
-  
-  output$slider <- renderUI({
-    df<-csvdata()
-    vectorTime=df$Time.s.
-    sliderMax<-max(vectorTime)
-    sliderMin<-min(vectorTime)
-    sliderInput("slider", "", min = sliderMin,max = sliderMax, width = 1000,value = c(sliderMin,sliderMax), step = 0.0005)
-  })
-  output$sliderRegion <- renderUI({
-    df<-csvdata()
-    vectorTime=df$Time.s.
-    sliderMax<-max(vectorTime)
-    sliderMin<-min(vectorTime)
-    sliderInput("sliderRegion", "区域范围选择: ", min=sliderMin,max=sliderMax,value = c(sliderMin,sliderMax))
-  })
-  output$checkboxGroupInput <- renderUI({
-    df<-csvdata()
-    vectorCHs<- colnames(df)
-    CHs.16<-c("CH1.1.V.","CH1.2.V.","CH1.3.V.","CH1.4.V.","CH2.1.V.","CH2.2.V.","CH2.3.V.","CH2.4.V.","CH3.1.V.","CH3.2.V.","CH3.3.V.","CH3.4.V.","CH4.1.V.","CH4.2.V.","CH4.3.V.","CH4.4.V.")
-    CHs.16_Remarks<-c("物料感应","植入上感应","植入下感应","检测1感应","检测2感应","中间盘感应","POS PIN 感应","POS PIN 位置感应","分离感应","中间盘动作","植入动作","上烙铁动作","POS PIN 动作","分离动作","检测1动作","检测2动作")
-
-    CHs.FullName<-vector(mode="character",length=0)
-    for (variable in vectorCHs) {
-      idx<-which(CHs.16 == variable)
-      tempCHs.FullName<-paste(variable,CHs.16_Remarks[idx])
-      CHs.FullName<-c(CHs.FullName,tempCHs.FullName)
-    }
-    print(CHs.FullName)
-    checkboxGroupInput("icons", "请勾选通道:",choices=CHs.FullName[-1],selected=CHs.FullName[-1],inline = FALSE)
-  })
-  output$ddl_YoffsetCH <- renderUI({
-    df<-csvdata()
-    vectorCHs<- colnames(df)[-1]
-    selectInput("ddloffsetCH", "请设置通道Y偏移量:（合图时）", 
-                choices = vectorCHs)
-  })
-  output$numericInput_Yoffset <- renderUI({
-    numericInput("numYoffset", "Y 偏移量：", 1)
   })
   ActionSignalValues <- reactive({
     
@@ -680,7 +584,6 @@ server <- function(input, output, session) {
       
     )
   }) 
-  
   SenseSignalValues <- reactive({
     
     df<-csvdata()
@@ -1132,6 +1035,8 @@ server <- function(input, output, session) {
   output$SenseValues <- renderTable({
     SenseSignalValues()
   })
+  
+  # Show plot
   output$sepratePlot <- renderPlot({
     df<-csvdata()
     vectorCHs<- colnames(df)[-1]
@@ -1162,7 +1067,6 @@ server <- function(input, output, session) {
        }
     }
     else {
-
       icons <- c(input$icons)
       icons<-substring(icons, 1, 8)
       # print(icons)
@@ -1174,12 +1078,9 @@ server <- function(input, output, session) {
         print(nam)#这是一个超级大坑，一定要print出来，否则报错
         plotlist1[[idx]]<- nam
       }
-      
       x = length(plotlist1)
-      
       cols = round(sqrt(x),0)
       rows = ceiling(x/cols)
-      
       cols=1
       rows=length(plotlist1)
       bl <- (length(plotlist1)==0)
@@ -1193,110 +1094,7 @@ server <- function(input, output, session) {
       # do.call("ggarrange", c(plist, ncol=nCol))
       # ggarrange(plist,ncol=1,nrow=2,labels=c("A","B"))
     }
-    
   })
-  # for (v in icons) {
-  #   idx<-which(vectorCHs==v)#获取勾选的通道的索引
-  #   
-  #   nam <- paste("plot", icons[idx], sep = ".")
-  #   nam<- funGetPlot(df,idx+1,input$slider,icons[idx])
-  #   print(nam)#这是一个超级大坑，一定要print出来，否则报错
-  #   plotlist1[[idx]]<- nam
-  # }
-  # observeEvent(
-  #   input$pl_brush,
-  #   {
-  #     df<-csvdata()
-  #     # if(!is.null(input$pl_click)) { ## 此处判断的是pl_click!
-  #       df <- brushedPoints(df, input$pl_brush, x='Time.s.', y='CH1.1.V.', allRows=TRUE)
-  #       pts$sel <- xor(pts$sel, df$selected)
-  #     # }
-  #   })
-
-  # output$Plot1<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #     icons <- c(input$icons)
-  #     funGetPlot(df,2,input$slider,icons[1])
-  # })
-  # output$Plot2<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,3,input$slider,icons[2])
-  # })
-  # output$Plot3<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,4,input$slider,icons[3])
-  # })
-  # output$Plot4<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,5,input$slider,icons[4])
-  # })
-  # output$Plot5<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,6,input$slider,icons[5])
-  # })
-  # output$Plot6<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,7,input$slider,icons[6])
-  # })
-  # output$Plot7<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,8,input$slider,icons[7])
-  # })
-  # output$Plot8<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,9,input$slider,icons[8])
-  # })
-  # output$Plot9<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,10,input$slider,icons[9])
-  # })
-  # output$Plot10<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,11,input$slider,icons[10])
-  # })
-  # output$Plot11<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,12,input$slider,icons[11])
-  # })
-  # output$Plot12<- renderPlot({
-  #   df<-csvdata()
-  #   vectorCHs<- colnames(df)[-1]
-  #   
-  #   icons <- c(input$icons)
-  #   funGetPlot(df,13,input$slider,icons[12])
-  # })
 }
 # Create a function to print squares of numbers in sequence.
 funGetPlot <- function(df,n,slideID,YText) {
