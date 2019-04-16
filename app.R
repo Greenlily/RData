@@ -126,8 +126,8 @@ server <- function(input, output, session) {
       tempCHs.FullName<-paste(variable,CHs.16_Remarks[idx])
       CHs.FullName<-c(CHs.FullName,tempCHs.FullName)
     }
-    print(CHs.FullName)
-    checkboxGroupInput("icons", "请勾选通道:",choices=CHs.FullName[-1],selected=CHs.FullName[-1],inline = FALSE)
+    # print(CHs.FullName)
+    checkboxGroupInput("icons", "请勾选通道:",choices = CHs.FullName[-1],selected=CHs.FullName[-1],inline = FALSE)
   })
   output$ddl_YoffsetCH <- renderUI({
     df<-csvdata()
@@ -140,7 +140,6 @@ server <- function(input, output, session) {
   })
   
   InitValues <- reactive({
-    
     df<-csvdata()
     vectorCHs<- colnames(df)
     vectorCH2.2=df$CH2.2.V
@@ -148,19 +147,12 @@ server <- function(input, output, session) {
     vectorTime=df$Time.s.
     #处理动作波形CH3.2
     pulse.x.CH3.2<- funGetPluseX(vectorTime,vectorCH3.2,2,10)[[1]]
-
-    #周期总数=动作波形突变点数/8的商
     Cycle.Qty.CH3.2 <- funGetCycleQty(pulse.x.CH3.2,8)
-    # print(Cycle.Qty.CH3.2)
-    #CH3.2异常周期（初始显示）
     Cycle.Each.TimeSpan <- funGet.Cycle.Each.TimeSpan(Cycle.Qty.CH3.2,pulse.x.CH3.2,8)
-    Cycle.diff.SortedIdx <- funGet.timespan.Outliers(Cycle.Each.TimeSpan)
-    
+    Cycle.diff.SortedIdx <- funGet.timespan.Outliers(Cycle.Each.TimeSpan)[[2]]
     #速度v,1分钟有多少个周期，60000/平均周期
     v<-60/mean(Cycle.Each.TimeSpan)
-    # print(v)
-    #CH3.2异常周期（初始显示）
-    
+
     # Compose data frame
     data.frame(
       Item = c("速度",
@@ -172,7 +164,6 @@ server <- function(input, output, session) {
         str_c(Cycle.diff.SortedIdx,collapse=',')
       ), 
       stringsAsFactors=FALSE)
-      
     )
   })
   ActionSignalValues <- reactive({
@@ -194,7 +185,7 @@ server <- function(input, output, session) {
     # print(Cycle.Qty.CH3.2)
     #CH3.2异常周期（初始显示）
     Cycle.Each.TimeSpan <- funGet.Cycle.Each.TimeSpan(Cycle.Qty.CH3.2,pulse.x.CH3.2,8)
-    Cycle.diff.SortedIdx <- funGet.timespan.Outliers(Cycle.Each.TimeSpan)
+    Cycle.diff.SortedIdx <- funGet.timespan.Outliers(Cycle.Each.TimeSpan)[[2]]
     #CH3.2异常周期（初始显示）
 
     #CH3.2高电平所有点
@@ -214,8 +205,8 @@ server <- function(input, output, session) {
     Start.CH3.2_CH2.2.timespan <- list.funGet.8pulse.timespan[[8]]
     End.CH3.2_CH2.2.timespan <- list.funGet.8pulse.timespan[[9]]
 
-    Start.CH3.2_CH2.2.timespan.diff.SortedIdx<- funGet.timespan.Outliers(Start.CH3.2_CH2.2.timespan)
-    End.CH3.2_CH2.2.timespan.diff.SortedIdx<-funGet.timespan.Outliers(End.CH3.2_CH2.2.timespan)
+    Start.CH3.2_CH2.2.timespan.diff.SortedIdx<- funGet.timespan.Outliers(Start.CH3.2_CH2.2.timespan)[[2]]
+    End.CH3.2_CH2.2.timespan.diff.SortedIdx<-funGet.timespan.Outliers(End.CH3.2_CH2.2.timespan)[[2]]
 
     # Compose data frame
     data.frame(
@@ -294,8 +285,8 @@ server <- function(input, output, session) {
    Start.CH3.2_CH2.2.timespan<-list.pulse.timespan.CH2.2[[3]]
    End.CH3.2_CH2.2.timespan<-list.pulse.timespan.CH2.2[[4]]
    
-   Start.CH3.2_CH2.2.timespan.diff.SortedIdx<- funGet.timespan.Outliers(Start.CH3.2_CH2.2.timespan)
-   End.CH3.2_CH2.2.timespan.diff.SortedIdx<-funGet.timespan.Outliers(End.CH3.2_CH2.2.timespan)
+   Start.CH3.2_CH2.2.timespan.diff.SortedIdx<- funGet.timespan.Outliers(Start.CH3.2_CH2.2.timespan)[[2]]
+   End.CH3.2_CH2.2.timespan.diff.SortedIdx<-funGet.timespan.Outliers(End.CH3.2_CH2.2.timespan)[[2]]
    
    #CH2.2总周期时间段
    TotalCycle.TimeSpan.CH2.2<-pulse.x.CH2.2[2*Cycle.Qty.CH2.2+1]-pulse.x.CH2.2[1]
@@ -304,11 +295,11 @@ server <- function(input, output, session) {
    # print(Cycle.avg.CH2.2)
 
    highPoints.CH2.2.Max5Point.vectorTime <- funGet.Y.Outliers(highPoints.CH2.2,vectorTime,vectorCH2.2)[[1]]
-   high.CH2.2.timespan.diff.SortedIdx <- funGet.timespan.Outliers(high.CH2.2.timespan)
+   high.CH2.2.timespan.diff.SortedIdx <- funGet.timespan.Outliers(high.CH2.2.timespan)[[2]]
    # print(highPoints.CH2.2.Max5Point.vectorTime)
    
    lowPoints.CH2.2.Max5Point.vectorTime<- funGet.Y.Outliers(lowPoints.CH2.2,vectorTime,vectorCH2.2)[[1]]
-   low.CH2.2.timespan.diff.SortedIdx <- funGet.timespan.Outliers(low.CH2.2.timespan)
+   low.CH2.2.timespan.diff.SortedIdx <- funGet.timespan.Outliers(low.CH2.2.timespan)[[2]]
 
     # Compose data frame
     data.frame(
@@ -370,10 +361,9 @@ server <- function(input, output, session) {
 
     )
   }) 
-  
   RegionSelectedValues <- reactive({
     Region.Selected <- input$sliderRegion
-    print(paste("哈哈哈哈哈",Region.Selected))
+    # print(paste("哈哈哈哈哈",Region.Selected))
     df<-csvdata()
     vectorCHs<- colnames(df)
     vectorCH2.2=df$CH2.2.V
@@ -384,14 +374,11 @@ server <- function(input, output, session) {
     vectorCH3.2 <- funGetRegion.SelectedData(vectorTime,vectorCH3.2,Region.Selected)
     
     #判断区间是否有一个周期
-    # CycleQty.CH2.2<-funGetCycleQty()
-    #处理动作波形CH3.2
     pulse.x.CH3.2<- funGetPluseX(vectorTime,vectorCH3.2,2,10)[[1]]
-    # print(paste("CH3.2 x节点：",pulse.x.CH3.2) )
     Cycle.Qty.CH3.2<-funGetCycleQty(pulse.x.CH3.2,8)
+    # print(paste("CH3.2 x节点：",pulse.x.CH3.2) )
     # print(Cycle.Qty.CH3.2)
     
-    #  #处理感应波形CH2.2
     pulse.x.CH2.2<- funGetPluseX(vectorTime,vectorCH2.2,7,10)[[1]]
     pulse.x.CH2.2.idx<-funGetPluseX(vectorTime,vectorCH2.2,7,10)[[2]]
     # print(paste("CH2.2 x节点：",pulse.x.CH2.2))
@@ -400,22 +387,37 @@ server <- function(input, output, session) {
     # print(Cycle.Qty.CH2.2)
     #处理感应波形CH2.2
     
-    highPoints.CH2.2 <- funGet.HighLow.2Pulse.PerCycle(vectorCH2.2,pulse.x.CH2.2.idx,Cycle.Qty.CH2.2)[[1]]
-    lowPoints.CH2.2 <- funGet.HighLow.2Pulse.PerCycle(vectorCH2.2,pulse.x.CH2.2.idx,Cycle.Qty.CH2.2)[[2]]
+    list.HighLow.2Pulse.PerCycle <- funGet.HighLow.2Pulse.PerCycle(vectorCH2.2,pulse.x.CH2.2.idx,Cycle.Qty.CH2.2)
+    highPoints.CH2.2 <- list.HighLow.2Pulse.PerCycle[[1]]
+    lowPoints.CH2.2 <- list.HighLow.2Pulse.PerCycle[[2]]
     
     list.pulse.timespan.CH2.2 <- funGet.pulse.timespan(pulse.x.CH3.2,8,pulse.x.CH2.2,2,Cycle.Qty.CH2.2)
-    # cnt <- 0
+    
     high.CH2.2.timespan<-list.pulse.timespan.CH2.2[[1]]
     low.CH2.2.timespan<-list.pulse.timespan.CH2.2[[2]]
     Start.CH3.2_CH2.2.timespan<-list.pulse.timespan.CH2.2[[3]]
     End.CH3.2_CH2.2.timespan<-list.pulse.timespan.CH2.2[[4]]
     
     highPoints.CH2.2.Max5Point.vectorTime <- funGet.Y.Outliers(highPoints.CH2.2,vectorTime,vectorCH2.2)[[1]]
-    high.CH2.2.timespan.diff.SortedIdx <- funGet.timespan.Outliers(high.CH2.2.timespan)
-    # print(highPoints.CH2.2.Max5Point.vectorTime)
+    list.highPoints.CH2.2.timespan.Outliers <- funGet.timespan.Outliers(high.CH2.2.timespan)
+    high.CH2.2.Timespan.diff.Max <- list.highPoints.CH2.2.timespan.Outliers[[1]][1]
     
     lowPoints.CH2.2.Max5Point.vectorTime<- funGet.Y.Outliers(lowPoints.CH2.2,vectorTime,vectorCH2.2)[[1]]
-    low.CH2.2.timespan.diff.SortedIdx <- funGet.timespan.Outliers(low.CH2.2.timespan)
+    list.lowPoints.CH2.2.timespan.Outliers <- funGet.timespan.Outliers(low.CH2.2.timespan)
+    low.CH2.2.timespan.diff.Max <- list.lowPoints.CH2.2.timespan.Outliers[[1]][1]
+    
+    list.Start.CH3.2_CH2.2.timespan.Outliers <- funGet.timespan.Outliers(Start.CH3.2_CH2.2.timespan)
+    Start.CH3.2_CH2.2.timespan.diff.Max <-list.Start.CH3.2_CH2.2.timespan.Outliers[[1]][1]
+    
+    list.End.CH3.2_CH2.2.timespan.Outliers <- funGet.timespan.Outliers(End.CH3.2_CH2.2.timespan)
+    End.CH3.2_CH2.2.timespan.diff.Max <-list.End.CH3.2_CH2.2.timespan.Outliers[[1]][1]
+    
+    list.8pulse.timespan <- funGet.8pulse.timespan(pulse.x.CH3.2,8,pulse.x.CH2.2,2,Cycle.Qty.CH3.2)
+    high.1stStart2ndStart.timespan <- list.8pulse.timespan[[4]]
+    high.2ndStart3rdStart.timespan <- list.8pulse.timespan[[5]]
+    high.3rdStart4thStart.timespan <- list.8pulse.timespan[[6]]
+    thisCycleEnd_nextCycleStart.timespan <- list.8pulse.timespan[[7]]
+    
     # Compose data frame
     data.frame(
       CH2_2 = c(
@@ -423,18 +425,29 @@ server <- function(input, output, session) {
         "单次高电平最大差值",
         "单次低电平持续时间",
         "单次低电平最大差值",
-        "关联信号单周期记录值",
-        "关联信号单周期记录值与均值差值", 
-        "动作信号单周期内时间分别均值"
+        "关联信号单周期时序起始位置差均值",
+        "关联信号单周期时序起始位置差与均值最大差值", 
+        "关联信号单周期时序结束位置差均值",
+        "关联信号单周期时序结束位置差与均值最大差值", 
+        "动作信号单周期内第一次高电平与第二次高电平时间差均值",
+        "动作信号单周期内第二次高电平与第三次高电平时间差均值",
+        "动作信号单周期内第三次高电平与第四次高电平时间差均值",
+        "动作信号最后一次动作信号结束到下次信号起始时间差均值"
       ),
       CH2_2_Value = as.character(c(
-        signif(mean(high.CH2.2.timespan),7),#nrow(csvdata()),#1,#max(csvdata$Time.s.), 
-        str_c(high.CH2.2.timespan.diff.SortedIdx,collapse=','),
+        signif(mean(high.CH2.2.timespan),7),
+        signif(mean(high.CH2.2.Timespan.diff.Max),7),
         signif(mean(low.CH2.2.timespan),7),
-        str_c(low.CH2.2.timespan.diff.SortedIdx,collapse=','),
-        str_c(highPoints.CH2.2.Max5Point.vectorTime,collapse=','),
-        signif(mean(lowPoints.CH2.2),7),
-        signif(max(lowPoints.CH2.2),7)
+        signif(mean(low.CH2.2.timespan.diff.Max),7),
+        # paste("时序起始位置差",str_c(mean(Start.CH3.2_CH2.2.timespan),collapse=',')),
+        signif(mean(Start.CH3.2_CH2.2.timespan),7),
+        signif(mean(Start.CH3.2_CH2.2.timespan.diff.Max),7),
+        signif(mean(End.CH3.2_CH2.2.timespan),7),
+        signif(mean(End.CH3.2_CH2.2.timespan.diff.Max),7),
+        signif(mean(high.1stStart2ndStart.timespan),7),
+        signif(mean(high.2ndStart3rdStart.timespan),7),
+        signif(mean(high.3rdStart4thStart.timespan),7),
+        signif(mean(thisCycleEnd_nextCycleStart.timespan),7)
       ), 
       stringsAsFactors=FALSE)
     )
@@ -550,8 +563,6 @@ funGetRegion.SelectedData<-function(vectorX,vectorY,Region.Selected){
   Region.max <- Region.Selected[2]
   Region.min.idx<-which(vectorX == Region.min)
   Region.max.idx<-which(vectorX == Region.max)
-  print(Region.max.idx)
-  print(Region.min.idx)
   vectorY<-vectorY[Region.min.idx:Region.max.idx]
 }
 
@@ -586,7 +597,7 @@ funGet.HighLow.2Pulse.PerCycle<-function(vectorY,vectorX.idx,Cycle.Qty)
       lowPoints <- c(lowPoints,templowPoints)
       vidx = vidx + 1
     }
-    print(paste("第一次电平转换为低——高电平"))
+    # print(paste("第一次电平转换为低——高电平"))
   }
   else
   {
@@ -599,39 +610,9 @@ funGet.HighLow.2Pulse.PerCycle<-function(vectorY,vectorX.idx,Cycle.Qty)
       lowPoints <- c(lowPoints,templowPoints)
       vidx = vidx + 1
     }
-    print(paste("第一次电平转换为高——低电平"))
+    # print(paste("第一次电平转换为高——低电平"))
   }
   outPara<-list(highPoints,lowPoints)
-  # highPoints.CH2.2<-vector(mode="numeric",length=0)
-  # lowPoints.CH2.2<-vector(mode="numeric",length=0)
-  # if(vectorCH2.2[pulse.x.CH2.2.idx[2]]-vectorCH2.2[pulse.x.CH2.2.idx[1]]<0)#识别高低电平变化规律
-  # {
-  #   #获取所有高电平向量、所有低电平向量
-  #   vidx<-1
-  #   while (vidx <= Cycle.Qty.CH2.2) {
-  #     print(vidx)
-  #     temphighPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx-1]+3):(pulse.x.CH2.2.idx[2*vidx]-3)]#往区间内两端各收3个点过滤误差值
-  #     highPoints.CH2.2 <- c(highPoints.CH2.2,temphighPoints.CH2.2)
-  #     
-  #     templowPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx]+3):(pulse.x.CH2.2.idx[2*vidx+1]-3)]
-  #     lowPoints.CH2.2 <- c(lowPoints.CH2.2,templowPoints.CH2.2)
-  #     vidx = vidx + 1
-  #   }
-  #   print(paste("第一次电平转换为低——高电平"))
-  # }
-  # else
-  # {
-  #   vidx<-1
-  #   while (vidx <= Cycle.Qty) {
-  #     # print(vidx)
-  #     temphighPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx]+3):(pulse.x.CH2.2.idx[2*vidx+1]-3)]
-  #     highPoints.CH2.2 <- c(highPoints.CH2.2,temphighPoints.CH2.2)
-  #     templowPoints.CH2.2<-vectorCH2.2[(pulse.x.CH2.2.idx[2*vidx-1]+3):(pulse.x.CH2.2.idx[2*vidx]-3)]
-  #     lowPoints.CH2.2 <- c(lowPoints.CH2.2,templowPoints.CH2.2)
-  #     vidx = vidx + 1
-  #   }
-  #   print(paste("第一次电平转换为高——低电平"))
-  # }
 }
 funGet.Y.Outliers<- function(highPoints,vectorX,vectorY)
 {
@@ -647,7 +628,7 @@ funGet.Y.Outliers<- function(highPoints,vectorX,vectorY)
     tempvectorY.SortedIdx<-which(vectorY==highPoints[temphighPoints.diff.SortedIdx])
     vectorY.Sorted.Idx<-c(vectorY.Sorted.Idx,tempvectorY.SortedIdx)
   }
-  print(highPoints.diff.SortedIdx)
+  # print(highPoints.diff.SortedIdx)
   highPoints.Max5Point.vectorX<-vectorX[vectorY.Sorted.Idx][1:3]
   highPoints.Max5Point.vectorY<-highPoints[highPoints.diff.SortedIdx]
   
@@ -655,19 +636,21 @@ funGet.Y.Outliers<- function(highPoints,vectorX,vectorY)
   outPara<-list(highPoints.Max5Point.vectorX,highPoints.Max5Point.vectorY)
 
 }
-funGet.timespan.Outliers<-function(high.timespan)
+funGet.timespan.Outliers<-function(vectorTimespan)
 {
-  high.timespan.diff<-abs(high.timespan - mean(high.timespan))
+  vectorTimespan.diff<-abs(vectorTimespan - mean(vectorTimespan))
   # print(high.CH2.2.timespan.diff)
   # print(sort(Cycle.diff, decreasing = TRUE))
-  high.timespan.diff.DecSorted=sort(high.timespan.diff, decreasing = TRUE)
-  high.timespan.diff.SortedIdx<-vector(mode="numeric",length=0)
-  for (variable in high.timespan.diff.DecSorted) {
-    temphigh.timespan.diff.SortedIdx<-which(high.timespan.diff==variable)
-    high.timespan.diff.SortedIdx<-c(high.timespan.diff.SortedIdx,temphigh.timespan.diff.SortedIdx)
+  vectorTimespan.diff.DecSorted = sort(vectorTimespan.diff, decreasing = TRUE)
+  vectorTimespan.diff.SortedIdx <- vector(mode="numeric",length=0)
+  for (variable in vectorTimespan.diff.DecSorted) {
+    tempvectorTimespan.diff.SortedIdx <- which(vectorTimespan.diff == variable)
+    vectorTimespan.diff.SortedIdx <- c(vectorTimespan.diff.SortedIdx,tempvectorTimespan.diff.SortedIdx)
   }
-  high.timespan.diff.SortedIdx<-high.timespan.diff.SortedIdx[1:length(high.timespan)]
-  print(high.timespan.diff.SortedIdx)
+  vectorTimespan.diff.SortedIdx<-vectorTimespan.diff.SortedIdx[1:length(vectorTimespan)]
+  
+  outParas<-list(vectorTimespan.diff.DecSorted,vectorTimespan.diff.SortedIdx)
+  # print(vectorTimespan.diff.SortedIdx)
 }
 funGet.pulse.timespan<-function(pulse.X.CHaction,pulse.QtyperCycel.action,pulse.X.CHsense,pulse.QtyperCycel.sense,Cycle.Qty.CHsense)
 {
@@ -720,14 +703,6 @@ funGet.8pulse.timespan<-function(pulse.X.CHaction,pulse.QtyperCycel.action,pulse
   End.CHaction_CHsense.timespan<-vector(mode="numeric",length=0)
   
   while (cnt < Cycle.Qty.CHaction) {
-    # print(v)
-    # print(which(vectorTime==pulse.x.CH2.2[1]))
-    # p1<-which(vectorTime==pulse.x.CH3.2[4*cnt+1])
-    # print(p1)
-    # p2<-which(vectorTime==pulse.x.CH3.2[4*cnt+2])
-    # print(p2)
-    # high.First.y.Points<-c(high.First.y.Points
-    #                        ,vectorCH3.2[p1:p2])
     tempHigh.1st.timespan<-pulse.X.CHaction[pulse.QtyperCycel.action*cnt+2]-pulse.X.CHaction[pulse.QtyperCycel.action*cnt+1]
     high.1st.timespan<-c(high.1st.timespan,tempHigh.1st.timespan)
     
