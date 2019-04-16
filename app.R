@@ -313,7 +313,6 @@ server <- function(input, output, session) {
     # Compose data frame
     data.frame(
       CH2_2 = c(
-
                "周期均值", 
                "高电平均值",
                "高电平最大值",
@@ -341,7 +340,6 @@ server <- function(input, output, session) {
                "单次关联动作时序结束异常位置"
                ),
       CH2_2_Value = as.character(c(
-
         signif(Cycle.avg.CH2.2,7),#nrow(csvdata()),#1,#max(csvdata$Time.s.), 
         signif(mean(highPoints.CH2.2),7),
         signif(max(highPoints.CH2.2),7),
@@ -387,9 +385,59 @@ server <- function(input, output, session) {
     
     #判断区间是否有一个周期
     # CycleQty.CH2.2<-funGetCycleQty()
+    #处理动作波形CH3.2
+    pulse.x.CH3.2<- funGetPluseX(vectorTime,vectorCH3.2,2,10)[[1]]
+    # print(paste("CH3.2 x节点：",pulse.x.CH3.2) )
+    Cycle.Qty.CH3.2<-funGetCycleQty(pulse.x.CH3.2,8)
+    # print(Cycle.Qty.CH3.2)
     
-    print(mean((vectorCH2.2)))
+    #  #处理感应波形CH2.2
+    pulse.x.CH2.2<- funGetPluseX(vectorTime,vectorCH2.2,7,10)[[1]]
+    pulse.x.CH2.2.idx<-funGetPluseX(vectorTime,vectorCH2.2,7,10)[[2]]
+    # print(paste("CH2.2 x节点：",pulse.x.CH2.2))
+    # print(paste("嘿嘿嘿嘿",pulse.x.CH2.2.idx))
+    Cycle.Qty.CH2.2<-funGetCycleQty(pulse.x.CH2.2,2)
+    # print(Cycle.Qty.CH2.2)
+    #处理感应波形CH2.2
     
+    highPoints.CH2.2 <- funGet.HighLow.2Pulse.PerCycle(vectorCH2.2,pulse.x.CH2.2.idx,Cycle.Qty.CH2.2)[[1]]
+    lowPoints.CH2.2 <- funGet.HighLow.2Pulse.PerCycle(vectorCH2.2,pulse.x.CH2.2.idx,Cycle.Qty.CH2.2)[[2]]
+    
+    list.pulse.timespan.CH2.2 <- funGet.pulse.timespan(pulse.x.CH3.2,8,pulse.x.CH2.2,2,Cycle.Qty.CH2.2)
+    # cnt <- 0
+    high.CH2.2.timespan<-list.pulse.timespan.CH2.2[[1]]
+    low.CH2.2.timespan<-list.pulse.timespan.CH2.2[[2]]
+    Start.CH3.2_CH2.2.timespan<-list.pulse.timespan.CH2.2[[3]]
+    End.CH3.2_CH2.2.timespan<-list.pulse.timespan.CH2.2[[4]]
+    
+    highPoints.CH2.2.Max5Point.vectorTime <- funGet.Y.Outliers(highPoints.CH2.2,vectorTime,vectorCH2.2)[[1]]
+    high.CH2.2.timespan.diff.SortedIdx <- funGet.timespan.Outliers(high.CH2.2.timespan)
+    # print(highPoints.CH2.2.Max5Point.vectorTime)
+    
+    lowPoints.CH2.2.Max5Point.vectorTime<- funGet.Y.Outliers(lowPoints.CH2.2,vectorTime,vectorCH2.2)[[1]]
+    low.CH2.2.timespan.diff.SortedIdx <- funGet.timespan.Outliers(low.CH2.2.timespan)
+    # Compose data frame
+    data.frame(
+      CH2_2 = c(
+        "单次高电平持续时间", 
+        "单次高电平最大差值",
+        "单次低电平持续时间",
+        "单次低电平最大差值",
+        "关联信号单周期记录值",
+        "关联信号单周期记录值与均值差值", 
+        "动作信号单周期内时间分别均值"
+      ),
+      CH2_2_Value = as.character(c(
+        signif(mean(high.CH2.2.timespan),7),#nrow(csvdata()),#1,#max(csvdata$Time.s.), 
+        str_c(high.CH2.2.timespan.diff.SortedIdx,collapse=','),
+        signif(mean(low.CH2.2.timespan),7),
+        str_c(low.CH2.2.timespan.diff.SortedIdx,collapse=','),
+        str_c(highPoints.CH2.2.Max5Point.vectorTime,collapse=','),
+        signif(mean(lowPoints.CH2.2),7),
+        signif(max(lowPoints.CH2.2),7)
+      ), 
+      stringsAsFactors=FALSE)
+    )
   })
 
   # Show the values using an HTML table
