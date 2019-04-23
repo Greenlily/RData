@@ -250,7 +250,7 @@ server <- function(input, output, session) {
     vectorCH3.2=df$CH3.2.V.
     vectorTime=df$Time.s.
     #处理动作波形CH3.2
-    pulse.x.CH3.2<- funGetPulseX(vectorTime,vectorCH3.2,2,10)[[1]]
+    pulse.x.CH3.2<- funGetPulseX(vectorTime,vectorCH3.2,2,10,8)[[1]]
     Cycle.Qty.CH3.2 <- funGetCycleQty(pulse.x.CH3.2,8)
     Cycle.Each.TimeSpan <- funGet.Cycle.Each.TimeSpan(Cycle.Qty.CH3.2,pulse.x.CH3.2,8)
     Cycle.diff.SortedIdx <- funGet.timespan.Outliers(Cycle.Each.TimeSpan)[[2]]
@@ -279,10 +279,10 @@ server <- function(input, output, session) {
     vectorTime=df$Time.s.
     
     #处理动作波形CH3.2
-    pulse.x.CH3.2<- funGetPulseX(vectorTime,vectorCH3.2,2,10)[[1]]
+    pulse.x.CH3.2<- funGetPulseX(vectorTime,vectorCH3.2,2,10,8)[[1]]
     #  #处理感应波形CH2.2
-    pulse.x.CH2.2<- funGetPulseX(vectorTime,vectorCH2.2,7,10)[[1]]
-    pulse.x.CH2.2.idx<-funGetPulseX(vectorTime,vectorCH2.2,7,10)[[2]]
+    pulse.x.CH2.2<- funGetPulseX(vectorTime,vectorCH2.2,7,10,2)[[1]]
+    pulse.x.CH2.2.idx<-funGetPulseX(vectorTime,vectorCH2.2,7,10,2)[[2]]
     # print(paste("CH3.2 x节点：",pulse.x.CH3.2) )
     #周期总数=动作波形突变点数/8的商
     Cycle.Qty.CH3.2 <- funGetCycleQty(pulse.x.CH3.2,8)
@@ -365,15 +365,15 @@ server <- function(input, output, session) {
     vectorTime=df$Time.s.
     
     #处理动作波形CH3.2
-    pulse.x.CH3.2<- funGetPulseX(vectorTime,vectorCH3.2,2,10)[[1]]
-    pulse.x.CH3.2.idx<-funGetPulseX(vectorTime,vectorCH3.2,2,10)[[2]]
+    pulse.x.CH3.2<- funGetPulseX(vectorTime,vectorCH3.2,2,10,8)[[1]]
+    pulse.x.CH3.2.idx<-funGetPulseX(vectorTime,vectorCH3.2,2,10,8)[[2]]
     # print(paste("CH3.2 x节点：",pulse.x.CH3.2) )
     Cycle.Qty.CH3.2<-funGetCycleQty(pulse.x.CH3.2,8)
     # print(Cycle.Qty.CH3.2)
     
     #  #处理感应波形CH2.2
-    pulse.x.CH2.2<- funGetPulseX(vectorTime,vectorCH2.2,7,10)[[1]]
-    pulse.x.CH2.2.idx<-funGetPulseX(vectorTime,vectorCH2.2,7,10)[[2]]
+    pulse.x.CH2.2<- funGetPulseX(vectorTime,vectorCH2.2,7,10,2)[[1]]
+    pulse.x.CH2.2.idx<-funGetPulseX(vectorTime,vectorCH2.2,7,10,2)[[2]]
     # print(paste("CH2.2 x节点：",pulse.x.CH2.2))
     # print(paste("嘿嘿嘿嘿",pulse.x.CH2.2.idx))
     Cycle.Qty.CH2.2<-funGetCycleQty(pulse.x.CH2.2,2)
@@ -481,13 +481,13 @@ server <- function(input, output, session) {
     vectorCH3.2 <- funGetRegion.SelectedData(vectorTime,vectorCH3.2,Region.Selected)
     
     #判断区间是否有一个周期
-    pulse.x.CH3.2<- funGetPulseX(vectorTime,vectorCH3.2,2,10)[[1]]
+    pulse.x.CH3.2<- funGetPulseX(vectorTime,vectorCH3.2,2,10,8)[[1]]
     Cycle.Qty.CH3.2<-funGetCycleQty(pulse.x.CH3.2,8)
     # print(paste("CH3.2 x节点：",pulse.x.CH3.2) )
     # print(Cycle.Qty.CH3.2)
     
-    pulse.x.CH2.2<- funGetPulseX(vectorTime,vectorCH2.2,7,10)[[1]]
-    pulse.x.CH2.2.idx<-funGetPulseX(vectorTime,vectorCH2.2,7,10)[[2]]
+    pulse.x.CH2.2<- funGetPulseX(vectorTime,vectorCH2.2,7,10,2)[[1]]
+    pulse.x.CH2.2.idx<-funGetPulseX(vectorTime,vectorCH2.2,7,10,2)[[2]]
     # print(paste("CH2.2 x节点：",pulse.x.CH2.2))
     # print(paste("嘿嘿嘿嘿",pulse.x.CH2.2.idx))
     Cycle.Qty.CH2.2<-funGetCycleQty(pulse.x.CH2.2,2)
@@ -575,43 +575,80 @@ server <- function(input, output, session) {
     vectorCH1.1=df$CH1.1.V
     vectorCH2.2=df$CH2.2.V
     vectorCH3.2=df$CH3.2.V
-    # vectorCH2.1=df$CH2.1.V
-    # vectorCH4.4=df$CH4.4.V
+    vectorCH2.1=df$CH2.1.V
+    vectorCH4.4=df$CH4.4.V#4脉冲波需要清洗数据
+    vectorCH1.2=df$CH1.2.V
+    vectorCH3.3=df$CH3.3.V#4脉冲波需要清洗数据
+    vectorCH1.3=df$CH1.3.V
+    vectorCH2.3=df$CH2.3.V
+    vectorCH4.1=df$CH4.1.V
+    vectorCH2.4=df$CH2.4.V
+    vectorCH4.2=df$CH4.2.V
+   
     
-    # list.pulse.x.CH4.2 <- funGetPulseX.curve(vectorTime,vectorCH4.2,4,5)
     
+    list.pulse.x.CH4.2 <- funGetPulseX(vectorTime,vectorCH4.2,4,5,2)
+    list.pulse.x.CH3.1 <- funGetPulseX(vectorTime,vectorCH3.1,4,5,2)
+    list.pulse.x.CH1.1 <- funGetPulseX(vectorTime,vectorCH1.1,4,1500,2)
+    list.pulse.x.CH3.2 <- funGetPulseX(vectorTime,vectorCH3.2,2,10,8)
+    list.pulse.x.CH2.2 <- funGetPulseX(vectorTime,vectorCH2.2,7,10,2)
+    list.pulse.x.CH2.1 <- funGetPulseX(vectorTime,vectorCH2.1,7,10,2)
+    list.pulse.x.CH4.4 <- funGetPulseX(vectorTime,vectorCH4.4,2,5,4)
     
-    list.pulse.x.CH4.2 <- funGetPulseX(vectorTime,vectorCH4.2,4,5)
-    list.pulse.x.CH3.1 <- funGetPulseX(vectorTime,vectorCH3.1,4,5)
-    list.pulse.x.CH1.1 <- funGetPulseX(vectorTime,vectorCH1.1,4,1500)
-    list.pulse.x.CH3.2 <- funGetPulseX(vectorTime,vectorCH3.2,2,10)
-    list.pulse.x.CH2.2 <- funGetPulseX(vectorTime,vectorCH2.2,7,10)
-    # list.pulse.x.CH2.1 <- funGetPulseX(vectorTime,vectorCH2.1,7,10)
+    list.pulse.x.CH1.2 <- funGetPulseX(vectorTime,vectorCH1.2,7,10,2)
+    list.pulse.x.CH3.3 <- funGetPulseX(vectorTime,vectorCH3.3,2,5,4)
+    list.pulse.x.CH1.3 <- funGetPulseX(vectorTime,vectorCH1.3,7,10,2)
+    list.pulse.x.CH2.3 <- funGetPulseX(vectorTime,vectorCH2.3,7,10,2)
+    list.pulse.x.CH4.1 <- funGetPulseX(vectorTime,vectorCH4.1,2,5,2)
+    list.pulse.x.CH2.4 <- funGetPulseX(vectorTime,vectorCH2.4,7,10,2)
+    list.pulse.x.CH4.2 <- funGetPulseX(vectorTime,vectorCH4.2,3,10,2)
 
     pulse.x.CH4.2 <- list.pulse.x.CH4.2[[1]]
     pulse.x.CH3.1 <- list.pulse.x.CH3.1[[1]]
     pulse.x.CH1.1 <- list.pulse.x.CH1.1[[1]]
     pulse.x.CH3.2 <- list.pulse.x.CH3.2[[1]]
     pulse.x.CH2.2 <- list.pulse.x.CH2.2[[1]]
-    # pulse.x.CH2.1 <- list.pulse.x.CH2.1[[1]]
+    pulse.x.CH2.1 <- list.pulse.x.CH2.1[[1]]
+    pulse.x.CH4.4 <- list.pulse.x.CH4.4[[1]]
+    
+    pulse.x.CH1.2 <- list.pulse.x.CH1.2[[1]]
+    pulse.x.CH3.3 <- list.pulse.x.CH3.3[[1]]
+    pulse.x.CH1.3 <- list.pulse.x.CH1.3[[1]]
+    pulse.x.CH2.3 <- list.pulse.x.CH2.3[[1]]
+    pulse.x.CH4.1 <- list.pulse.x.CH4.1[[1]]
+    pulse.x.CH2.4 <- list.pulse.x.CH2.4[[1]]
+    pulse.x.CH4.2 <- list.pulse.x.CH4.2[[1]]
+    
     
     Pulse.X.idx.CH4.2 <-list.pulse.x.CH4.2[[2]]
     Pulse.X.idx.CH3.1 <-list.pulse.x.CH3.1[[2]]
     Pulse.X.idx.CH1.1 <-list.pulse.x.CH1.1[[2]]
     Pulse.X.idx.CH3.2 <-list.pulse.x.CH3.2[[2]]
     Pulse.X.idx.CH2.2 <-list.pulse.x.CH2.2[[2]]
-    # Pulse.X.idx.CH2.1 <-list.pulse.x.CH2.1[[2]]
+    Pulse.X.idx.CH2.1 <-list.pulse.x.CH2.1[[2]]
+    Pulse.X.idx.CH4.4 <-list.pulse.x.CH4.4[[2]]
+    
+    Pulse.X.idx.CH1.2 <-list.pulse.x.CH1.2[[2]]
+    Pulse.X.idx.CH3.3 <-list.pulse.x.CH3.3[[2]]
+    Pulse.X.idx.CH1.3 <-list.pulse.x.CH1.3[[2]]
+    Pulse.X.idx.CH2.3 <-list.pulse.x.CH2.3[[2]]
+    Pulse.X.idx.CH4.1 <-list.pulse.x.CH4.1[[2]]
+    Pulse.X.idx.CH2.4 <-list.pulse.x.CH2.4[[2]]
+    Pulse.X.idx.CH4.2 <-list.pulse.x.CH4.2[[2]]
     
     Cycle.Qty.CH2.2 <- funGetCycleQty(pulse.x.CH2.2,2)
     Cycle.Qty.CH3.2 <- funGetCycleQty(pulse.x.CH3.2,8)
+    Cycle.Qty.CH4.4 <- funGetCycleQty(pulse.x.CH4.4,4)
+    
+    
     #过滤时序脉冲，清洗掉动作波脉冲发生前的感应波脉冲
-    print(pulse.x.CH3.1 > pulse.x.CH4.2[1])
+    # print(pulse.x.CH3.1 > pulse.x.CH4.2[1])
     Pulse.X.idx.CH3.1 <- Pulse.X.idx.CH3.1[pulse.x.CH3.1 > pulse.x.CH4.2[1]]
     pulse.x.CH3.1 <- pulse.x.CH3.1[pulse.x.CH3.1 > pulse.x.CH4.2[1]]
-    print(pulse.x.CH3.1)
-    print(Pulse.X.idx.CH3.1)
+    # print(pulse.x.CH3.1)
+    # print(Pulse.X.idx.CH3.1)
     
-    print(Pulse.X.idx.CH3.1)
+    # print(Pulse.X.idx.CH3.1)
     Pulse.X.idx.CH1.1  <- Pulse.X.idx.CH1.1[pulse.x.CH1.1 > pulse.x.CH3.1[1]]
     pulse.x.CH1.1 <- pulse.x.CH1.1[pulse.x.CH1.1 > pulse.x.CH3.1[1]]
     
@@ -621,7 +658,6 @@ server <- function(input, output, session) {
     t3 <- list.2pulse.timespan.CH4.2[[1]]
     
     Cycle.Qty.CH3.1 <- funGetCycleQty(pulse.x.CH3.1,2)
-    
     list.2pulse.timespan.CH3.1 <- funGet.2pulse.timespan(vectorCH3.1,Pulse.X.idx.CH3.1,pulse.x.CH3.1,2,Cycle.Qty.CH3.1)
     t6 <- list.2pulse.timespan.CH3.1[[1]]
     t7 <- list.2pulse.timespan.CH3.1[[2]]
@@ -630,13 +666,59 @@ server <- function(input, output, session) {
     list.2pulse.timespan.CH1.1 <- funGet.2pulse.timespan(vectorCH1.1,Pulse.X.idx.CH1.1,pulse.x.CH1.1,2,Cycle.Qty.CH1.1)
     t9 <- list.2pulse.timespan.CH1.1[[1]]
     
+    Cycle.Qty.CH2.1 <- funGetCycleQty(pulse.x.CH2.1,2)
+    list.2pulse.timespan.CH2.1 <- funGet.2pulse.timespan(vectorCH2.1,Pulse.X.idx.CH2.1,pulse.x.CH2.1,2,Cycle.Qty.CH2.1)
+    t22 <- list.2pulse.timespan.CH2.1[[1]]
+    
+    Cycle.Qty.CH1.2 <- funGetCycleQty(pulse.x.CH1.2,2)
+    list.2pulse.timespan.CH1.2 <- funGet.2pulse.timespan(vectorCH1.2,Pulse.X.idx.CH1.2,pulse.x.CH1.2,2,Cycle.Qty.CH1.2)
+    t24 <- list.2pulse.timespan.CH1.2[[1]]
+    
+    Cycle.Qty.CH3.3 <- funGetCycleQty(pulse.x.CH3.3,4)
+    list.4pulse.timespan.CH3.3 <- funGet.4pulse.timespan(vectorCH3.3,Pulse.X.idx.CH3.3,pulse.x.CH3.3,4,Cycle.Qty.CH3.3)
+    t28 <- list.4pulse.timespan.CH3.3[[1]]
+    t29 <- list.4pulse.timespan.CH3.3[[2]]
+    t30 <- list.4pulse.timespan.CH3.3[[3]]
+    
+    Cycle.Qty.CH1.3 <- funGetCycleQty(pulse.x.CH1.3,2)
+    list.2pulse.timespan.CH1.3 <- funGet.2pulse.timespan(vectorCH1.3,Pulse.X.idx.CH1.3,pulse.x.CH1.3,2,Cycle.Qty.CH1.3)
+    t32 <- list.2pulse.timespan.CH1.3[[2]]
+    
+    Cycle.Qty.CH2.3 <- funGetCycleQty(pulse.x.CH2.3,2)
+    list.2pulse.timespan.CH2.3 <- funGet.2pulse.timespan(vectorCH2.3,Pulse.X.idx.CH2.3,pulse.x.CH2.3,2,Cycle.Qty.CH2.3)
+    t34 <- list.2pulse.timespan.CH2.3[[1]]
+    
+    Cycle.Qty.CH4.1 <- funGetCycleQty(pulse.x.CH4.1,2)
+    list.2pulse.timespan.CH4.1 <- funGet.2pulse.timespan(vectorCH4.1,Pulse.X.idx.CH4.1,pulse.x.CH4.1,2,Cycle.Qty.CH4.1)
+    t35 <- list.2pulse.timespan.CH4.1[[2]]
+    
+    Cycle.Qty.CH2.4 <- funGetCycleQty(pulse.x.CH2.4,2)
+    list.2pulse.timespan.CH2.4 <- funGet.2pulse.timespan(vectorCH2.4,Pulse.X.idx.CH2.4,pulse.x.CH2.4,2,Cycle.Qty.CH2.4)
+    t38 <- list.2pulse.timespan.CH2.4[[1]]
+    
+    Cycle.Qty.CH4.2 <- funGetCycleQty(pulse.x.CH4.2,2)
+    list.2pulse.timespan.CH4.2 <- funGet.2pulse.timespan(vectorCH4.2,Pulse.X.idx.CH4.2,pulse.x.CH4.2,2,Cycle.Qty.CH4.2)
+    t41 <- list.2pulse.timespan.CH4.2[[1]]
+    
     t2 <- funGet.pulse.timespan.2Wave.1(pulse.x.CH1.1,Pulse.X.idx.CH1.1,vectorCH1.1,2,pulse.x.CH4.2,vectorCH4.2, 2,Cycle.Qty.CH4.2)
     t4 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH2.2,Pulse.X.idx.CH2.2,vectorCH2.2,2,pulse.x.CH4.2,vectorCH4.2, 2,Cycle.Qty.CH4.2)
     t5 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH4.2,Pulse.X.idx.CH4.2,vectorCH4.2,2,pulse.x.CH2.2,vectorCH2.2, 2,Cycle.Qty.CH2.2)
     t8 <- funGet.pulse.timespan.2Wave.1(pulse.x.CH3.1,Pulse.X.idx.CH3.1,vectorCH3.1,2,pulse.x.CH1.1,vectorCH1.1, 2,Cycle.Qty.CH1.1)
     t10 <- funGet.pulse.timespan.2Wave.1(pulse.x.CH1.1,Pulse.X.idx.CH1.1,vectorCH1.1,2,pulse.x.CH3.2,vectorCH3.2, 8,Cycle.Qty.CH3.2)
     t11 <- funGet.pulse.timespan.2Wave.1(pulse.x.CH3.2,Pulse.X.idx.CH3.2,vectorCH3.2,8,pulse.x.CH2.2,vectorCH2.2, 2,Cycle.Qty.CH2.2)
-    # t16 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH2.1,Pulse.X.idx.CH2.1,vectorCH2.1,2,pulse.x.CH3.2,vectorCH3.2, 8,Cycle.Qty.CH3.2)
+    t16 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH2.1,Pulse.X.idx.CH2.1,vectorCH2.1,2,pulse.x.CH3.2,vectorCH3.2, 8,Cycle.Qty.CH3.2)
+    t17 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH2.2,Pulse.X.idx.CH2.2,vectorCH2.2,2,pulse.x.CH4.4,vectorCH4.4, 4,Cycle.Qty.CH4.4)
+    t21 <- funGet.pulse.timespan.2Wave.1(pulse.x.CH4.4,Pulse.X.idx.CH4.4,vectorCH4.4,4,pulse.x.CH2.1,vectorCH2.1, 2,Cycle.Qty.CH2.1)
+    t23 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH2.2,Pulse.X.idx.CH2.2,vectorCH2.2,2,pulse.x.CH1.2,vectorCH1.2, 2,Cycle.Qty.CH1.2)
+    t25 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH2.2,Pulse.X.idx.CH2.2,vectorCH2.2,2,pulse.x.CH3.3,vectorCH3.3, 4,Cycle.Qty.CH3.3)
+    t26 <- funGet.pulse.timespan.2Wave.1(pulse.x.CH3.3,Pulse.X.idx.CH3.3,vectorCH3.3,4,pulse.x.CH1.2,vectorCH1.2, 2,Cycle.Qty.CH1.2)
+    t27 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH1.2,Pulse.X.idx.CH1.2,vectorCH1.2,2,pulse.x.CH3.2,vectorCH3.2, 8,Cycle.Qty.CH3.2)
+    t31 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH2.2,Pulse.X.idx.CH2.2,vectorCH2.2,2,pulse.x.CH1.3,vectorCH1.3, 2,Cycle.Qty.CH1.3)
+    t33 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH1.3,Pulse.X.idx.CH1.3,vectorCH1.3,2,pulse.x.CH2.3,vectorCH2.3, 2,Cycle.Qty.CH2.3)
+    t36 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH4.1,Pulse.X.idx.CH4.1,vectorCH4.1,2,pulse.x.CH2.4,vectorCH2.4, 2,Cycle.Qty.CH2.4)
+    t37 <- funGet.pulse.timespan.2Wave.1(pulse.x.CH2.4,Pulse.X.idx.CH2.4,vectorCH2.4,2,pulse.x.CH1.3,vectorCH1.3, 2,Cycle.Qty.CH1.3)
+    t39 <- funGet.pulse.timespan.2Wave.2(pulse.x.CH2.4,Pulse.X.idx.CH2.4,vectorCH2.4,2,pulse.x.CH4.1,vectorCH4.1, 2,Cycle.Qty.CH4.1)
+    t40 <- funGet.pulse.timespan.2Wave.1(pulse.x.CH4.1,Pulse.X.idx.CH4.1,vectorCH4.1,2,pulse.x.CH4.2,vectorCH4.2, 2,Cycle.Qty.CH4.2)
     
     Cycle.Qty.CH2.2 <- funGetCycleQty(pulse.x.CH2.2,2)
     list.2pulse.timespan.CH2.2 <- funGet.2pulse.timespan(vectorCH2.2,Pulse.X.idx.CH2.2,pulse.x.CH2.2,2,Cycle.Qty.CH2.2)
@@ -648,6 +730,14 @@ server <- function(input, output, session) {
     t14 <- list.8pulse.timespan[[5]]
     t15 <- list.8pulse.timespan[[6]]
     t42 <- list.8pulse.timespan[[7]]
+    
+    list.4pulse.timespan.CH4.4 <- funGet.4pulse.timespan(vectorCH4.4,Pulse.X.idx.CH4.4,pulse.x.CH4.4,4,Cycle.Qty.CH4.4)
+    t18 <- list.4pulse.timespan.CH4.4[[1]]
+    t19 <- list.4pulse.timespan.CH4.4[[2]]
+    t20 <- list.4pulse.timespan.CH4.4[[3]]
+    
+    
+    
     
     Cycle.Each.TimeSpan <- funGet.Cycle.Each.TimeSpan(Cycle.Qty.CH3.2,pulse.x.CH3.2,8)
     #速度v,1分钟有多少个周期，60000/平均周期
@@ -671,12 +761,40 @@ server <- function(input, output, session) {
         "t12",
         "t13",
         "t14",
-        "t15"#,
-        # "t16"
+        "t15",
+        "t16",
+        "t17",
+        "t18",
+        "t19",
+        "t20",
+        "t21", 
+        "t22",
+        "t23",
+        "t24",
+        "t25",
+        "t26",
+        "t27",
+        "t28",
+        "t29",
+        "t30",
+        "t31",
+        "t32",
+        "t33",
+        "t34",
+        "t35",
+        "t36",
+        "t37",
+        "t38",
+        "t39",
+        "t40",
+        "t41",
+        "t42"#,
+        # "t43",
+        # "t44"
       ),
       Value.ms = as.character(c(
         signif(v,7),
-        signif(mean(Cycle.Each.TimeSpan),7),
+        signif(mean(Cycle.Each.TimeSpan*1000),7),
         signif(mean(t1*1000),7),
         signif(mean(t2*1000),7),
         signif(mean(t3*1000),7),
@@ -691,8 +809,36 @@ server <- function(input, output, session) {
         signif(mean(t12*1000),7),
         signif(mean(t13*1000),7),
         signif(mean(t14*1000),7),
-        signif(mean(t15*1000),7)#,
-        # signif(mean(t16*1000),7)
+        signif(mean(t15*1000),7),
+        signif(mean(t16*1000),7),
+        signif(mean(t17*1000),7),
+        signif(mean(t18*1000),7),
+        signif(mean(t19*1000),7),
+        signif(mean(t20*1000),7),
+        signif(mean(t21*1000),7),
+        signif(mean(t22*1000),7),
+        signif(mean(t23*1000),7),
+        signif(mean(t24*1000),7),
+        signif(mean(t25*1000),7),
+        signif(mean(t26*1000),7),
+        signif(mean(t27*1000),7),
+        signif(mean(t28*1000),7),
+        signif(mean(t29*1000),7),
+        signif(mean(t30*1000),7),
+        signif(mean(t31*1000),7),
+        signif(mean(t32*1000),7),
+        signif(mean(t33*1000),7),
+        signif(mean(t34*1000),7),
+        signif(mean(t35*1000),7),
+        signif(mean(t36*1000),7),
+        signif(mean(t37*1000),7),
+        signif(mean(t38*1000),7),
+        signif(mean(t39*1000),7),
+        signif(mean(t40*1000),7),
+        signif(mean(t41*1000),7),
+        signif(mean(t42*1000),7)#,
+        # signif(mean(t43*1000),7),
+        # signif(mean(t44*1000),7)
       ), 
       stringsAsFactors=FALSE)
     )
@@ -744,6 +890,7 @@ server <- function(input, output, session) {
   })
   output$plotlyCH1.1 <- renderPlotly({
     df<-SelectedCHsData()
+    
     if(input$disp == "One") {
       
     }
@@ -799,16 +946,41 @@ funGetRegion.SelectedData<-function(vectorX,vectorY,Region.Selected){
 #vectorCH3.2,Threshold.Y.1st=2,Threshold.X.2nd=10
 #vectorCH2.2,Threshold.Y.1st=7,Threshold.X.2nd=10
 #vectorCH4.2,Threshold.Y.1st=10,Threshold.X.2nd=10
-funGetPulseX<-function(vectorX,vector.Y,Threshold.Y.1st,Threshold.X.2nd)
+funGetPulseX <- function(vectorX,vector.Y,Threshold.Y.1st,Threshold.X.2nd,pulse.QtyperCycel)
 {
   vector.Y.1stDiff<-vector.Y[-1]-vector.Y[-length(vector.Y)]
   vector.Y.1stDiff.filtered<- vector.Y.1stDiff[abs(vector.Y.1stDiff) > Threshold.Y.1st] #
   vector.X.1stDiff<-which(abs(vector.Y.1stDiff) > Threshold.Y.1st)
   
   vector.X.2ndDiff<-vector.X.1stDiff[-1]-vector.X.1stDiff[-length(vector.X.1stDiff)]
-  Pulse.X.idx<-vector.X.1stDiff[vector.X.2ndDiff>Threshold.X.2nd]+1
-  Pulse.X<-vectorX[Pulse.X.idx]
+  Pulse.X.idx<-vector.X.1stDiff[vector.X.2ndDiff > Threshold.X.2nd] + 1
+  Pulse.X <- vectorX[Pulse.X.idx]
   Pulse.X <- Pulse.X[!is.na(Pulse.X)]
+  
+  
+  if(pulse.QtyperCycel==4)#4脉冲波需要清洗数据,将第一个不足4脉冲的波形过滤掉
+  {
+    print("4脉冲波")
+    # print()
+    print(Pulse.X)
+    print(Pulse.X.idx)
+    print(Pulse.X[4])
+    print(Pulse.X[1] + 0.007)
+     # Pulse.X[4] > Pulse.X[1] + 0.007
+   if(Pulse.X[4] - Pulse.X[1] > 0.007)
+   {
+    # print()
+    Pulse.X <- Pulse.X[which(Pulse.X > (Pulse.X[1] + 0.007))]
+   }
+    # print(Pulse.X)
+   
+  }
+  else
+  {
+    print("不是4脉冲波")
+  }
+  print(Pulse.X)
+  
   outPara<-list(Pulse.X,Pulse.X.idx)
 }
 funGetPulseX.curve<-function(vector.X,vector.Y,Threshold.Y.1st,Threshold.X.2nd)
@@ -952,9 +1124,9 @@ funGet.pulse.timespan.2Wave.1 <- function(pulse.X.1st,pulse.X.1st.idx,pulse.Y.1s
     L_H.Pulse.idx.1st <- 2
     # L_H.Pulse.idx.2nd <- which(pulse.X.2nd > pulse.X.1st[1])[1]
   }
-  print(paste("L_H.Pulse.idx.1st:",L_H.Pulse.idx.1st))
+  # print(paste("L_H.Pulse.idx.1st:",L_H.Pulse.idx.1st))
   L_H.Pulse.idx.2nd <- which(pulse.X.2nd > pulse.X.1st[L_H.Pulse.idx.1st])[1]
-  print(L_H.Pulse.idx.2nd)
+  # print(L_H.Pulse.idx.2nd)
   # print(paste("第一次电平转换为低——高电平"))
   while (cnt < Cycle.Qty.2nd) {
     t.temp <- pulse.X.2nd[pulse.QtyperCycel.2nd*cnt + L_H.Pulse.idx.2nd] - pulse.X.1st[pulse.QtyperCycel.1st*cnt + L_H.Pulse.idx.1st]
@@ -979,7 +1151,7 @@ funGet.pulse.timespan.2Wave.2 <- function(pulse.X.1st,pulse.X.1st.idx,pulse.Y.1s
   {
     H_L.Pulse.idx.1st <- 1
   }
-  print(paste("H_L.Pulse.idx.1st:",H_L.Pulse.idx.1st))
+  # print(paste("H_L.Pulse.idx.1st:",H_L.Pulse.idx.1st))
   H_L.Pulse.idx.2nd <- which(pulse.X.2nd > pulse.X.1st[H_L.Pulse.idx.1st])[1]
   # print(paste("第一次电平转换为低——高电平"))
   while (cnt < Cycle.Qty.2nd) {
@@ -988,7 +1160,7 @@ funGet.pulse.timespan.2Wave.2 <- function(pulse.X.1st,pulse.X.1st.idx,pulse.Y.1s
     t <- c(t,t.temp)
     cnt = cnt + 1
   }
-  t
+  t<- t[!is.na(t)]
 }
 funGet.8pulse.timespan<-function(pulse.X.CHaction,pulse.QtyperCycel.action,pulse.X.CHsense,pulse.QtyperCycel.sense,Cycle.Qty.CHaction)
 {
@@ -1037,6 +1209,28 @@ funGet.8pulse.timespan<-function(pulse.X.CHaction,pulse.QtyperCycel.action,pulse
     cnt = cnt + 1
   }
   outPara<-list(high.1st.timespan,high.1stEnd2ndStart.timespan,high.2nd.timespan,high.1stStart2ndStart.timespan,high.2ndStart3rdStart.timespan,high.3rdStart4thStart.timespan,thisCycleEnd_nextCycleStart.timespan,Start.CHaction_CHsense.timespan,End.CHaction_CHsense.timespan)
+}
+#对于4个脉冲的波形，会传入经过预处理的pulse.X.CHn，去除第一个不足4个脉冲的波形，所有默认传入的都是有完整4个脉冲的波形，否则识别 t18,t19,t20太复杂
+funGet.4pulse.timespan<-function(vectorY,vectorX.idx, pulse.X.CHn,pulse.QtyperCycel,Cycle.Qty)
+{
+  cnt <- 0
+  # high.First.y.Points<-vector(mode="numeric",length=0)
+  high.1st.timespan <- vector(mode="numeric",length=0)
+  low.1st.timespan <- vector(mode="numeric",length=0)
+  high.2nd.timespan <- vector(mode="numeric",length=0)
+  while (cnt < Cycle.Qty) {
+    temphigh.1st.timespan <- pulse.X.CHn[pulse.QtyperCycel*cnt+2]-pulse.X.CHn[pulse.QtyperCycel*cnt+1]
+    high.1st.timespan <- c(high.1st.timespan,temphigh.1st.timespan)
+      
+    templow.1st.timespan <- pulse.X.CHn[pulse.QtyperCycel*cnt+3]-pulse.X.CHn[pulse.QtyperCycel*cnt+2]
+    low.1st.timespan <- c(low.1st.timespan,templow.1st.timespan)
+      
+    temphigh.2nd.timespan <- pulse.X.CHn[pulse.QtyperCycel*cnt+4]-pulse.X.CHn[pulse.QtyperCycel*cnt+3]
+    high.2nd.timespan <- c(high.2nd.timespan,temphigh.2nd.timespan)
+   
+    cnt = cnt + 1
+  }
+  outPara<-list(high.1st.timespan,low.1st.timespan,high.2nd.timespan)
 }
 funGet.Cycle.Each.TimeSpan<-function(Cycle.Qty,pulse.x.CH,pulse.QtyperCycel)
 {
